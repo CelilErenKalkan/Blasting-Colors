@@ -1,19 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts;
 using UnityEngine;
+using Group = System.Text.RegularExpressions.Group;
 
 public class Dot : MonoBehaviour
 {
     public int column;
     public int row;
+    private int speed = 5;
     public int targetX;
     public int targetY;
+    public bool isMatched = false;
     private Board board;
     private GameObject otherDot;
     private Vector2 firstTouchPosition;
     private Vector2 finalTouchPosition;
     private Vector2 tempPos;
     public float swipeAngle = 0;
+    public GameObject groupPrefab;
+    public GameObject group;
 
 
     // Start is called before the first frame update
@@ -35,7 +41,7 @@ public class Dot : MonoBehaviour
         {
             //Move Towards Target.
             tempPos = new Vector2(targetX, transform.position.y);
-            transform.position = Vector2.Lerp(transform.position, tempPos, .1f);
+            transform.position = Vector2.Lerp(transform.position, tempPos, Time.deltaTime * speed);
         }
         else
         {
@@ -49,7 +55,7 @@ public class Dot : MonoBehaviour
         {
             //Move Towards Target.
             tempPos = new Vector2(transform.position.x, targetY);
-            transform.position = Vector2.Lerp(transform.position, tempPos, .1f);
+            transform.position = Vector2.Lerp(transform.position, tempPos, Time.deltaTime * speed);
         }
         else
         {
@@ -110,4 +116,130 @@ public class Dot : MonoBehaviour
             row -= 1;
         }
     }
+
+    void FindMatches()
+    {
+        //Checking columns.
+        if (column > 0 && column < board.width - 1)
+        {
+            GameObject leftDot1 = board.allDots[column - 1, row];
+            GameObject rightDot1 = board.allDots[column + 1, row];
+            if (leftDot1.tag == this.gameObject.tag && rightDot1.tag == this.gameObject.tag)
+            {
+                leftDot1.GetComponent<Dot>().isMatched = true;
+                rightDot1.GetComponent<Dot>().isMatched = true;
+                isMatched = true;
+            }
+        }
+
+        //Checking rows.
+        if (row > 0 && row < board.height - 1)
+        {
+            GameObject upDot1 = board.allDots[column, row + 1];
+            GameObject downDot1 = board.allDots[column, row - 1];
+            if (upDot1.tag == this.gameObject.tag && downDot1.tag == this.gameObject.tag)
+            {
+                upDot1.GetComponent<Dot>().isMatched = true;
+                downDot1.GetComponent<Dot>().isMatched = true;
+                isMatched = true;
+            }
+        }
+    }
+
+    public void CreateGroup()
+    {
+        Debug.Log("Group Created.");
+        group = Instantiate(groupPrefab, new Vector3(0f, 0f, 0f), Quaternion.identity);
+        transform.parent = group.transform;
+        group.gameObject.GetComponent<Grouping>().Add(gameObject.tag.ToString());
+    }
+
+    //public void FindGroup()
+    //{
+    //    if (group == null)
+    //    {
+    //        Debug.Log("Group Created.");
+    //        group = Instantiate(groupPrefab, new Vector3(0f, 0f, 0f), Quaternion.identity);
+    //        transform.parent = group.transform;
+    //        group.gameObject.GetComponent<Grouping>().Add(gameObject.tag.ToString());
+    //    }
+
+    //    //Checking columns.
+    //    if (column > 0 && column < board.width - 1)
+    //    {
+    //        Debug.Log("Column");
+    //        GameObject leftDot1 = board.allDots[column - 1, row];
+    //        GameObject rightDot1 = board.allDots[column + 1, row];
+    //        if (rightDot1.tag == this.gameObject.tag && rightDot1.GetComponent<Dot>().group == null)
+    //        {
+    //            Debug.Log("Member Added.");
+    //            rightDot1.transform.parent = group.transform;
+    //        }
+    //        else if (rightDot1.tag == this.gameObject.tag && rightDot1.GetComponent<Dot>().group != group)
+    //        {
+    //            Debug.Log("Group Changed.");
+    //            if (rightDot1.GetComponent<Dot>().group.transform.childCount >
+    //                group.transform.childCount)
+    //            {
+    //                group.GetComponent<Grouping>().ChangeGroup(rightDot1.transform.parent.gameObject);
+    //            }
+    //            else if (rightDot1.GetComponent<Dot>().group.transform.childCount <=
+    //                     group.transform.childCount)
+    //            {
+    //                rightDot1.transform.parent.GetComponent<Grouping>().ChangeGroup(transform.parent.gameObject);
+    //            }
+    //        }
+
+    //        if (leftDot1.tag == this.gameObject.tag && leftDot1.GetComponent<Dot>().group == null)
+    //        {
+    //            leftDot1.transform.parent = group.transform;
+    //        }
+    //        else if (leftDot1.tag == this.gameObject.tag && leftDot1.GetComponent<Dot>().group != group)
+    //        {
+    //            if (leftDot1.GetComponent<Dot>().group.transform.childCount >
+    //                group.transform.childCount)
+    //            {
+    //                group.GetComponent<Grouping>().ChangeGroup(leftDot1.transform.parent.gameObject);
+    //            }
+    //        }
+    //    }
+
+    //    //Checking rows.
+    //    if (row > 0 && row < board.height - 1)
+    //    {
+    //        Debug.Log("Column");
+    //        GameObject upDot1 = board.allDots[column, row + 1];
+    //        GameObject downDot1 = board.allDots[column, row - 1];
+    //        if (upDot1.tag == this.gameObject.tag && upDot1.GetComponent<Dot>().group == null)
+    //        {
+    //            upDot1.transform.parent = group.transform;
+    //        }
+    //        else if (upDot1.tag == this.gameObject.tag && upDot1.GetComponent<Dot>().group != group)
+    //        {
+    //            if (upDot1.GetComponent<Dot>().group.transform.childCount >
+    //                group.transform.childCount)
+    //            {
+    //                group.GetComponent<Grouping>().ChangeGroup(upDot1.transform.parent.gameObject);
+    //            }
+    //            else if (upDot1.GetComponent<Dot>().group.transform.childCount <=
+    //                     group.transform.childCount)
+    //            {
+    //                upDot1.transform.parent.GetComponent<Grouping>().ChangeGroup(transform.parent.gameObject);
+    //            }
+    //        }
+
+    //        if (downDot1.tag == this.gameObject.tag && downDot1.GetComponent<Dot>().group == null)
+    //        {
+    //            downDot1.transform.parent = group.transform;
+    //        }
+    //        else if (downDot1.tag == this.gameObject.tag && downDot1.GetComponent<Dot>().group != group)
+    //        {
+    //            if (downDot1.GetComponent<Dot>().group.transform.childCount >
+    //                group.transform.childCount)
+    //            {
+    //                group.GetComponent<Grouping>().ChangeGroup(downDot1.transform.parent.gameObject);
+    //            }
+    //        }
+    //    }
+    //}
 }
