@@ -26,14 +26,17 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
-                Vector2 temPos = new Vector2(i, j);
-                int dotToUse = Random.Range(0, dots.Length);
-                GameObject dot = Instantiate(dots[dotToUse], temPos, Quaternion.identity);
-                dot.name = "( " + i + ", " + j + " )";
-                allDots[i, j] = dot;
-                Grouping();
+                if (allDots[i, j] == null)
+                {
+                    Vector2 temPos = new Vector2(i, j);
+                    int dotToUse = Random.Range(0, dots.Length);
+                    GameObject dot = Instantiate(dots[dotToUse], temPos, Quaternion.identity);
+                    dot.name = "( " + i + ", " + j + " )";
+                    allDots[i, j] = dot;
+                }
             }
         }
+        Grouping();
     }
 
     private void Grouping()
@@ -154,21 +157,10 @@ public class Board : MonoBehaviour
                     allDots[i, j] = null;
                 }
             }
-
             nullCount = 0;
         }
-        Grouping();
         yield return new WaitForSeconds(.4f);
-    }
-
-    private void Refill()
-    {
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
-
-            }
-        }
+        SetUp();
+        yield return new WaitForSeconds(.1f);
     }
 }
