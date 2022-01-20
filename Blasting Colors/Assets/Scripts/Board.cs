@@ -18,7 +18,6 @@ public class Board : MonoBehaviour
         allTiles = new BackgroundTile[width, height];
         allDots = new GameObject[width, height];
         SetUp();
-        CheckGroups();
     }
 
     private void SetUp()
@@ -28,17 +27,35 @@ public class Board : MonoBehaviour
             for (int j = 0; j < height; j++)
             {
                 Vector2 temPos = new Vector2(i, j);
-                GameObject backgroundTile = Instantiate(tilePrefab, temPos, Quaternion.identity) as GameObject;
-                backgroundTile.transform.parent = this.transform;
-                backgroundTile.name = "( Tile " + i + ", " + j + " )";
                 int dotToUse = Random.Range(0, dots.Length);
                 GameObject dot = Instantiate(dots[dotToUse], temPos, Quaternion.identity);
-                dot.transform.parent = this.transform;
                 dot.name = "( " + i + ", " + j + " )";
                 allDots[i, j] = dot;
-                dot.GetComponent<Dot>().CreateGroup();
+                Grouping();
             }
         }
+    }
+
+    private void Grouping()
+    {
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                if (allDots[i, j] != null)
+                {
+                    RemoveGroups(i, j);
+                }
+            }
+        }
+        CheckGroups();
+    }
+
+    private void RemoveGroups(int column, int row)
+    {
+        allDots[column, row].GetComponent<Dot>().group = null;
+        allDots[column, row].transform.parent = null;
+        allDots[column, row].GetComponent<Dot>().CreateGroup();
     }
 
     private void CheckGroups()
@@ -50,20 +67,107 @@ public class Board : MonoBehaviour
                 //Checking Right.
                 if (i < width - 1)
                 {
-                    if (allDots[i, j].tag == allDots[i + 1, j].tag)
+                    if (allDots[i, j] != null && allDots[i + 1, j] != null)
                     {
-                        allDots[i + 1, j].transform.parent.gameObject.GetComponent<Grouping>().ChangeGroup(allDots[i,j].transform.parent.gameObject, allDots[i + 1, j]);
+                        if (allDots[i, j].tag == allDots[i + 1, j].tag)
+                        {
+                            if (allDots[i, j].transform.parent.childCount >=
+                                allDots[i + 1, j].transform.parent.childCount)
+                            {
+                                allDots[i + 1, j].transform.parent.gameObject.GetComponent<Grouping>()
+                                    .ChangeGroup(allDots[i, j].transform.parent.gameObject);
+                            }
+                            else if (allDots[i, j].transform.parent.childCount <
+                                     allDots[i + 1, j].transform.parent.childCount)
+                            {
+                                allDots[i, j].transform.parent.gameObject.GetComponent<Grouping>()
+                                    .ChangeGroup(allDots[i + 1, j].transform.parent.gameObject);
+                            }
+                        }
                     }
                 }
 
-                //Checking Left.
+                //Checking Up.
                 if (j < height - 1)
                 {
-                    if (allDots[i, j].tag == allDots[i, j + 1].tag)
+                    if (allDots[i, j] != null && allDots[i, j + 1] != null)
                     {
-                        allDots[i, j + 1].transform.parent.gameObject.GetComponent<Grouping>().ChangeGroup(allDots[i, j].transform.parent.gameObject, allDots[i, j + 1]);
+                        if (allDots[i, j].tag == allDots[i, j + 1].tag)
+                        {
+                            if (allDots[i, j].transform.parent.childCount >=
+                                allDots[i, j + 1].transform.parent.childCount)
+                            {
+                                allDots[i, j + 1].transform.parent.gameObject.GetComponent<Grouping>()
+                                    .ChangeGroup(allDots[i, j].transform.parent.gameObject);
+                            }
+                            else if (allDots[i, j].transform.parent.childCount <
+                                     allDots[i, j + 1].transform.parent.childCount)
+                            {
+                                allDots[i, j].transform.parent.gameObject.GetComponent<Grouping>()
+                                    .ChangeGroup(allDots[i, j + 1].transform.parent.gameObject);
+                            }
+                        }
                     }
                 }
+            }
+        }
+    }
+
+    private void DestroyDotsAt(int column, int row)
+    {
+        Destroy(allDots[column, row]);
+            allDots[column, row] = null;
+    }
+
+    public void DestroyDots(GameObject group)
+    {
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                if (allDots[i, j] != null && allDots[i,j].transform.parent == group.transform)
+                {
+                    DestroyDotsAt(i, j);
+                }
+            }
+        }
+
+        Destroy(group, 0.1f);
+        StartCoroutine(DecreaseRow());
+    }
+
+    private IEnumerator DecreaseRow()
+    {
+        int nullCount = 0;
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                if (allDots[i, j] == null)
+                {
+                    nullCount++;
+                }
+                else if (nullCount > 0)
+                {
+                    allDots[i, j].GetComponent<Dot>().row -= nullCount;
+                    allDots[i, allDots[i, j].GetComponent<Dot>().row] = allDots[i, j];
+                    allDots[i, j] = null;
+                }
+            }
+
+            nullCount = 0;
+        }
+        Grouping();
+        yield return new WaitForSeconds(.4f);
+    }
+
+    private void Refill()
+    {
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+
             }
         }
     }
