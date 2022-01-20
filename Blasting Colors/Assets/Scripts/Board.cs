@@ -38,6 +38,8 @@ public class Board : MonoBehaviour
             }
         }
         Grouping();
+        CheckGroups();
+        CheckIcon();
     }
 
     private void Grouping()
@@ -52,7 +54,6 @@ public class Board : MonoBehaviour
                 }
             }
         }
-        CheckGroups();
     }
 
     private void RemoveGroups(int column, int row)
@@ -117,6 +118,13 @@ public class Board : MonoBehaviour
         }
     }
 
+    private void CheckIcon()
+    {
+        foreach (var dot in allDots)
+        {
+            dot.GetComponent<Dot>().CheckIcon();
+        }
+    }
     private void DestroyDotsAt(int column, int row)
     {
         Destroy(allDots[column, row]);

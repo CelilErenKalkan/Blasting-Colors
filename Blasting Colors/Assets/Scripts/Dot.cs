@@ -9,20 +9,21 @@ public class Dot : MonoBehaviour
     public int column;
     public int row;
     private int speed = 5;
-    [HideInInspector]public int targetX;
-    [HideInInspector]public int targetY;
+    [HideInInspector] public int targetX;
+    [HideInInspector] public int targetY;
     private Board board;
     private Vector2 tempPos;
     public GameObject groupPrefab;
     public GameObject group;
+    private SpriteRenderer spriteRenderer;
 
 
     // Start is called before the first frame update
     void Start()
     {
         board = FindObjectOfType<Board>();
-        targetX = (int) transform.position.x;
-        targetY = (int) transform.position.y;
+        targetX = (int)transform.position.x;
+        targetY = (int)transform.position.y;
         row = targetY - board.GetComponent<Board>().offset;
         column = targetX;
     }
@@ -71,7 +72,10 @@ public class Dot : MonoBehaviour
 
     private void OnMouseUp()
     {
-        board.GetComponent<Board>().DestroyDots(group);
+        if (transform.parent.childCount > 1)
+            board.GetComponent<Board>().DestroyDots(group);
+        else
+            Debug.Log("You cannot destroy only one dot.");
     }
 
     public void CreateGroup()
@@ -79,6 +83,28 @@ public class Dot : MonoBehaviour
         group = Instantiate(groupPrefab, new Vector3(0f, 0f, 0f), Quaternion.identity);
         transform.parent = group.transform;
         group.gameObject.GetComponent<Grouping>().Add(gameObject.tag.ToString());
+    }
+
+    public void CheckIcon()
+    {
+        var amount = transform.parent.childCount;
+        spriteRenderer = this.GetComponent<SpriteRenderer>();
+        if (amount < 5)
+        {
+            spriteRenderer.sprite = Resources.Load<Sprite>("2D/" + gameObject.tag.ToString() + "/" + gameObject.tag.ToString() + "_Default") as Sprite;
+        }
+        else if (amount < 8)
+        {
+            spriteRenderer.sprite = Resources.Load<Sprite>("2D/" + gameObject.tag.ToString() + "/" + gameObject.tag.ToString() + "_A") as Sprite;
+        }
+        else if (amount < 10)
+        {
+            spriteRenderer.sprite = Resources.Load<Sprite>("2D/" + gameObject.tag.ToString() + "/" + gameObject.tag.ToString() + "_B") as Sprite;
+        }
+        else
+        {
+            spriteRenderer.sprite = Resources.Load<Sprite>("2D/" + gameObject.tag.ToString() + "/" + gameObject.tag.ToString() + "_C") as Sprite;
+        }
     }
 
 }
