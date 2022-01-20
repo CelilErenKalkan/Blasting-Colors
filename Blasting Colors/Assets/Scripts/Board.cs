@@ -40,6 +40,25 @@ public class Board : MonoBehaviour
         Grouping();
         CheckGroups();
         CheckIcon();
+        CheckShuffling();
+    }
+
+    private void CheckShuffling()
+    {
+        if (ShouldShuffle())
+        {
+            Debug.Log("Shuffling the Board.");
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    var dot = allDots[i, j];
+                    allDots[i, j] = null;
+                    Destroy(dot);
+                }
+            }
+            SetUp();
+        }
     }
 
     private void Grouping()
@@ -125,10 +144,11 @@ public class Board : MonoBehaviour
             dot.GetComponent<Dot>().CheckIcon();
         }
     }
+
     private void DestroyDotsAt(int column, int row)
     {
         Destroy(allDots[column, row]);
-            allDots[column, row] = null;
+        allDots[column, row] = null;
     }
 
     public void DestroyDots(GameObject group)
@@ -137,7 +157,7 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
-                if (allDots[i, j] != null && allDots[i,j].transform.parent == group.transform)
+                if (allDots[i, j] != null && allDots[i, j].transform.parent == group.transform)
                 {
                     DestroyDotsAt(i, j);
                 }
@@ -171,5 +191,23 @@ public class Board : MonoBehaviour
         yield return new WaitForSeconds(.4f);
         SetUp();
         yield return new WaitForSeconds(.1f);
+    }
+
+    private bool ShouldShuffle()
+    {
+        var count = 0;
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                if (allDots[i, j].transform.parent.childCount > 1)
+                    count++;
+            }
+        }
+
+        if (count > 1)
+            return false;
+        else
+            return true;
     }
 }

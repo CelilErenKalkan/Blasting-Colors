@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 7949424921106412337}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.35, y: 0.35, z: 0.35}
+  m_LocalScale: {x: 0.38, y: 0.38, z: 0.38}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -118,4 +118,3 @@ MonoBehaviour:
   targetY: 0
   groupPrefab: {fileID: 7250489366450604670, guid: a2bcb30a29b34df4eada975fb30ae5ba, type: 3}
   group: {fileID: 0}
-  colorName: Blue

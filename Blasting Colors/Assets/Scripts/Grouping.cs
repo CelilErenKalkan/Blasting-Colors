@@ -15,7 +15,7 @@ namespace Assets.Scripts
         {
             if (transform.childCount == 0)
             {
-                Destroy(gameObject, 0.15f);
+                Destroy(gameObject, 0.1f);
             }
         }
         public void Add(string color)
@@ -30,8 +30,6 @@ namespace Assets.Scripts
                 member.transform.parent = otherGroup.transform;
                 member.GetComponent<Dot>().group = otherGroup;
             }
-            if (transform.childCount == 0)
-                Destroy(gameObject, 0.1f);
         }
     }
 }
