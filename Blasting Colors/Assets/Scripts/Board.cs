@@ -7,6 +7,7 @@ public class Board : MonoBehaviour
 {
     public int width;
     public int height;
+    public int offset;
     public GameObject tilePrefab;
     private BackgroundTile[,] allTiles;
     public GameObject[] dots;
@@ -28,7 +29,7 @@ public class Board : MonoBehaviour
             {
                 if (allDots[i, j] == null)
                 {
-                    Vector2 temPos = new Vector2(i, j);
+                    Vector2 temPos = new Vector2(i, j + offset);
                     int dotToUse = Random.Range(0, dots.Length);
                     GameObject dot = Instantiate(dots[dotToUse], temPos, Quaternion.identity);
                     dot.name = "( " + i + ", " + j + " )";

@@ -23,7 +23,7 @@ public class Dot : MonoBehaviour
         board = FindObjectOfType<Board>();
         targetX = (int) transform.position.x;
         targetY = (int) transform.position.y;
-        row = targetY;
+        row = targetY - board.GetComponent<Board>().offset;
         column = targetX;
     }
 
