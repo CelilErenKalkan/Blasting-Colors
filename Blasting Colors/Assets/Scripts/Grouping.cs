@@ -9,19 +9,6 @@ namespace Assets.Scripts
 {
     public class Grouping : MonoBehaviour
     {
-        public string color;
-
-        void Update()
-        {
-            if (transform.childCount == 0)
-            {
-                Destroy(gameObject, 0.1f);
-            }
-        }
-        public void Add(string color)
-        {
-            this.color = color;
-        }
 
         public void ChangeGroup(GameObject otherGroup)
         {

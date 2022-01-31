@@ -163,6 +163,11 @@ MonoBehaviour:
   - {fileID: 7949424921106412337, guid: 3031f0ffcffaaaf4691e2c6e2ab1f495, type: 3}
   - {fileID: 7949424921106412337, guid: 627e746ef0aafbb4f81d564895d83b18, type: 3}
   - {fileID: 7949424921106412337, guid: 86c353fe5d90428498bce1cb51db507b, type: 3}
+  items:
+  - prefab: {fileID: 7250489366450604670, guid: a2bcb30a29b34df4eada975fb30ae5ba, type: 3}
+    amount: 160
+    expandable: 0
+  pooledItems: []
 --- !u!4 &245348657
 Transform:
   m_ObjectHideFlags: 0

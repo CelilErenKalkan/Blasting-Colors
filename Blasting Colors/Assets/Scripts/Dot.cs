@@ -13,7 +13,6 @@ public class Dot : MonoBehaviour
     [HideInInspector] public int targetY;
     private Board board;
     private Vector2 tempPos;
-    public GameObject groupPrefab;
     public GameObject group;
     private SpriteRenderer spriteRenderer;
 
@@ -80,9 +79,12 @@ public class Dot : MonoBehaviour
 
     public void CreateGroup()
     {
-        group = Instantiate(groupPrefab, new Vector3(0f, 0f, 0f), Quaternion.identity);
-        transform.parent = group.transform;
-        group.gameObject.GetComponent<Grouping>().Add(gameObject.tag.ToString());
+        group = Board.singleton.Get("Group");
+        if (group != null)
+        {
+            group.SetActive(true);
+            transform.parent = group.transform;
+        }
     }
 
     public void CheckIcon()
