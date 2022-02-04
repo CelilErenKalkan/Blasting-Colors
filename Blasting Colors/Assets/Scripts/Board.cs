@@ -22,6 +22,7 @@ namespace Assets.Scripts
         private BackgroundTile[,] allTiles;
         public GameObject[] dots;
         public GameObject[,] allDots;
+        public bool isPlayable = true;
 
         public static Board singleton;
         public List<PoolGroup> items;
@@ -77,7 +78,11 @@ namespace Assets.Scripts
             CheckIcon();
             yield return new WaitForSeconds(0.1f);
             CheckShuffling();
+
+            isPlayable = true;
         }
+
+        #region SetUp
 
         private void CheckShuffling()
         {
@@ -183,7 +188,6 @@ namespace Assets.Scripts
                 }
             }
 
-            //Destroy(group, 0.1f);
             group.SetActive(false);
             StartCoroutine(DecreaseRow());
         }
@@ -258,5 +262,7 @@ namespace Assets.Scripts
         {
             deactive.gameObject.SetActive(false);
         }
+
+        #endregion
     }
 }
