@@ -51,12 +51,6 @@ namespace Assets.Scripts
             StartCoroutine(SetUp());
         }
 
-
-        void Update()
-        {
-
-        }
-
         private IEnumerator SetUp()
         {
             for (int i = 0; i < width; i++)
@@ -126,7 +120,6 @@ namespace Assets.Scripts
             }
 
             allDots[column, row].GetComponent<Dot>().group = null;
-            DisactivateEmptyGroups();
             allDots[column, row].GetComponent<Dot>().CreateGroup();
         }
 
@@ -136,48 +129,26 @@ namespace Assets.Scripts
             {
                 for (int j = 0; j < height; j++)
                 {
-                    //Checking Right.
-                    if (i < width - 1)
+                    //Checking Left.
+                    if (i > 0)
                     {
-                        if (allDots[i, j] != null && allDots[i + 1, j] != null)
+                        if (allDots[i - 1, j] != null && allDots[i, j] != null)
                         {
-                            if (allDots[i, j].tag == allDots[i + 1, j].tag)
+                            if (allDots[i - 1, j].tag == allDots[i, j].tag)
                             {
-                                if (allDots[i, j].transform.parent.childCount >=
-                                    allDots[i + 1, j].transform.parent.childCount)
-                                {
-                                    allDots[i + 1, j].transform.parent.gameObject.GetComponent<Grouping>()
-                                        .ChangeGroup(allDots[i, j].transform.parent.gameObject);
-                                }
-                                else if (allDots[i, j].transform.parent.childCount <
-                                         allDots[i + 1, j].transform.parent.childCount)
-                                {
-                                    allDots[i, j].transform.parent.gameObject.GetComponent<Grouping>()
-                                        .ChangeGroup(allDots[i + 1, j].transform.parent.gameObject);
-                                }
+                                allDots[i - 1,j].transform.parent.GetComponent<Grouping>().ChangeGroup(allDots[i, j].transform.parent.gameObject);
                             }
                         }
                     }
 
-                    //Checking Up.
-                    if (j < height - 1)
+                    //Checking Down.
+                    if (j > 0)
                     {
-                        if (allDots[i, j] != null && allDots[i, j + 1] != null)
+                        if (allDots[i, j - 1] != null && allDots[i, j] != null)
                         {
-                            if (allDots[i, j].tag == allDots[i, j + 1].tag)
+                            if (allDots[i, j - 1].tag == allDots[i, j].tag)
                             {
-                                if (allDots[i, j].transform.parent.childCount >=
-                                    allDots[i, j + 1].transform.parent.childCount)
-                                {
-                                    allDots[i, j + 1].transform.parent.gameObject.GetComponent<Grouping>()
-                                        .ChangeGroup(allDots[i, j].transform.parent.gameObject);
-                                }
-                                else if (allDots[i, j].transform.parent.childCount <
-                                         allDots[i, j + 1].transform.parent.childCount)
-                                {
-                                    allDots[i, j].transform.parent.gameObject.GetComponent<Grouping>()
-                                        .ChangeGroup(allDots[i, j + 1].transform.parent.gameObject);
-                                }
+                                allDots[i, j - 1].transform.parent.GetComponent<Grouping>().ChangeGroup(allDots[i, j].transform.parent.gameObject);
                             }
                         }
                     }
@@ -283,15 +254,9 @@ namespace Assets.Scripts
             return null;
         }
 
-        private void DisactivateEmptyGroups()
+        public void DeactivateEmptyGroups(GameObject deactive)
         {
-            foreach (var item in pooledItems)
-            {
-                if (item.transform.childCount == 0)
-                {
-                    item.gameObject.SetActive(false);
-                }
-            }
+            deactive.gameObject.SetActive(false);
         }
     }
 }
