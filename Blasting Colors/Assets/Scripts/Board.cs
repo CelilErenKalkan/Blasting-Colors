@@ -84,7 +84,7 @@ namespace Assets.Scripts
 
         #region SetUp
 
-        private void CheckShuffling()
+        private void CheckShuffling() // Shuffles if all the dots are different from each other.
         {
             if (ShouldShuffle())
             {
@@ -102,7 +102,7 @@ namespace Assets.Scripts
             }
         }
 
-        private void Grouping()
+        private void Grouping() // Resets all the groups.
         {
             for (int i = 0; i < width; i++)
             {
@@ -128,7 +128,7 @@ namespace Assets.Scripts
             allDots[column, row].GetComponent<Dot>().CreateGroup();
         }
 
-        private void CheckGroups()
+        private void CheckGroups() // Gather all adjacent dots with the same color under one group.
         {
             for (int i = 0; i < width; i++)
             {
@@ -161,7 +161,7 @@ namespace Assets.Scripts
             }
         }
 
-        private void CheckIcon()
+        private void CheckIcon() // Checks for icon change.
         {
             foreach (var dot in allDots)
             {
@@ -169,13 +169,13 @@ namespace Assets.Scripts
             }
         }
 
-        private void DestroyDotsAt(int column, int row)
+        private void DestroyDotsAt(int column, int row) // Destroys the selected dot.
         {
             Destroy(allDots[column, row]);
             allDots[column, row] = null;
         }
 
-        public void DestroyDots(GameObject group)
+        public void DestroyDots(GameObject group) // Destroy all the dots in the selected dot.
         {
             for (int i = 0; i < width; i++)
             {
@@ -192,7 +192,7 @@ namespace Assets.Scripts
             StartCoroutine(DecreaseRow());
         }
 
-        private IEnumerator DecreaseRow()
+        private IEnumerator DecreaseRow() // Fills the empty places.
         {
             int nullCount = 0;
             for (int i = 0; i < width; i++)
@@ -217,7 +217,7 @@ namespace Assets.Scripts
             yield return new WaitForSeconds(.1f);
         }
 
-        private bool ShouldShuffle()
+        private bool ShouldShuffle() // Checking if shuffling necessary.
         {
             var count = 0;
             for (int i = 0; i < width; i++)
@@ -235,7 +235,7 @@ namespace Assets.Scripts
                 return true;
         }
 
-        public GameObject Get(string tag)
+        public GameObject Get(string tag) // Gets a group object from the pool.
         {
             for (int i = 0; i < pooledItems.Count; i++)
             {
@@ -258,7 +258,7 @@ namespace Assets.Scripts
             return null;
         }
 
-        public void DeactivateEmptyGroups(GameObject deactive)
+        public void DeactivateEmptyGroups(GameObject deactive) // Deactivates if the group object is empty.
         {
             deactive.gameObject.SetActive(false);
         }

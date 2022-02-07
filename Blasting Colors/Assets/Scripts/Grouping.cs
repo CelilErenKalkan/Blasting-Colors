@@ -17,7 +17,7 @@ namespace Assets.Scripts
             }
         }
 
-        public void ChangeGroup(GameObject otherGroup)
+        public void ChangeGroup(GameObject otherGroup) // Changes all members group into the given group.
         {
             if (otherGroup != this.gameObject)
             {
