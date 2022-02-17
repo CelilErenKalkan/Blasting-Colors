@@ -22,7 +22,7 @@ namespace Assets.Scripts
         private BackgroundTile[,] allTiles;
         public GameObject[] dots;
         public GameObject[,] allDots;
-        public bool isPlayable = true;
+        public bool isPlayable;
 
         public static Board singleton;
         public List<PoolGroup> items;
