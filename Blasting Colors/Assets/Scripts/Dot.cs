@@ -71,14 +71,16 @@ public class Dot : MonoBehaviour
 
     private void OnMouseUp()
     {
-        Board.singleton.isPlayable = false;
-
         if (Board.singleton.isPlayable)
         {
+            Board.singleton.isPlayable = false;
             if (transform.parent.childCount > 1)
                 board.GetComponent<Board>().DestroyDots(group);
             else
+            {
                 Debug.Log("You cannot destroy only one dot.");
+                Board.singleton.isPlayable = true;
+            }
         }
     }
 
