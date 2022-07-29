@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using static Actions;
 
 public class GameManager : MonoSingleton<GameManager>
 {
     [HideInInspector]public int width;
     [HideInInspector]public int height;
-    public int offset;
+    public float offset;
     public GameObject tilePrefab;
     private GameObject groups;
     private BackgroundTile[,] allTiles;
@@ -35,6 +34,7 @@ public class GameManager : MonoSingleton<GameManager>
                 {
                     //Vector2 temPos = new Vector2(i, j + offset);
                     Vector2 temPos = matrixTransforms[i,j];
+                    temPos.y += offset * j * 0.5f;
                     int dotToUse = Random.Range(0, dots.Length);
 
                     GameObject dot = Instantiate(dots[dotToUse], temPos, Quaternion.identity);
@@ -96,8 +96,11 @@ public class GameManager : MonoSingleton<GameManager>
         allDots[column, row].transform.parent = null;
         if (allDots[column, row].TryGetComponent(out Dot dot))
         {
-            dot.group.SetActive(false);
-            dot.group = null;
+            if (dot.group != null)
+            {
+                dot.group.SetActive(false);
+                dot.group = null;
+            }
             dot.CreateGroup();
         }
     }
@@ -187,6 +190,7 @@ public class GameManager : MonoSingleton<GameManager>
             nullCount = 0;
         }
         
+        DotDestroyed?.Invoke();
         SetUp();
     }
 

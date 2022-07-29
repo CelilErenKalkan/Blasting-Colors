@@ -9,6 +9,7 @@ public class Board : MonoBehaviour
     {
         GameManager.Instance.width = width;
         GameManager.Instance.height = height;
+        GameManager.Instance.offset = distance;
         GameManager.Instance.matrixTransforms = new Vector2[width, height];
         
         var currentPos = transform.position;
@@ -20,13 +21,13 @@ public class Board : MonoBehaviour
             for (int j = 0; j < height; j++)
             {
                 GameManager.Instance.matrixTransforms[i, j] = new Vector2(x, y);
-                x += distance;
+                y += distance;
             }
 
-            x = currentPos.x;
-            y += distance;
+            y = currentPos.y;
+            x += distance;
         }
 
-        y = currentPos.y;
+        x = currentPos.x;
     }
 }

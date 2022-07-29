@@ -154,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 6
   height: 8
-  distance: 0.38
+  distance: 0.6
 --- !u!4 &245348657
 Transform:
   m_ObjectHideFlags: 0
@@ -257,7 +257,7 @@ GameObject:
   - component: {fileID: 469957993}
   - component: {fileID: 469957992}
   m_Layer: 5
-  m_Name: Top_Ui
+  m_Name: TopUi
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -484,7 +484,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 20
   m_TargetDisplay: 0
 --- !u!224 &557205610
 RectTransform:
@@ -758,7 +758,7 @@ GameObject:
   - component: {fileID: 1030740783}
   - component: {fileID: 1030740782}
   m_Layer: 5
-  m_Name: Bottom_Ui
+  m_Name: BottomUi
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

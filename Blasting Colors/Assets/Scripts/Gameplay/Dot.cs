@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using DG.Tweening;
+using UnityEngine;
+using static Actions;
 
 public class Dot : MonoBehaviour
 {
@@ -6,36 +9,36 @@ public class Dot : MonoBehaviour
     [HideInInspector]public int row;
     [HideInInspector]public GameObject group;
     private int speed = 5;
+    private Vector2 tempPos;
     private SpriteRenderer spriteRenderer;
 
-    // Update is called once per frame
-    void Update()
-    {
-        var tempPos = GameManager.Instance.matrixTransforms[column, row];
-        
-        if (Mathf.Abs(tempPos.x - transform.position.x) > .1)
-        {
-            //Move Towards Target.
-            transform.position = Vector2.Lerp(transform.position, tempPos, Time.deltaTime * speed);
-        }
-        else
-        {
-            //Directly Set the Position.
-            transform.position = tempPos;
-            GameManager.Instance.allDots[column, row] = gameObject;
-        }
 
-        if (Mathf.Abs(tempPos.y - transform.position.y) > .1)
-        {
-            //Move Towards Target.
-            transform.position = Vector2.Lerp(transform.position, tempPos, Time.deltaTime * speed);
-        }
-        else
-        {
-            //Directly Set the Position.
-            transform.position = tempPos;
-            GameManager.Instance.allDots[column, row] = gameObject;
-        }
+    private void Start()
+    {
+        OnDotDestroyed();
+    }
+
+    private void OnEnable()
+    {
+        DotDestroyed += OnDotDestroyed;
+    }
+    
+    private void OnDisable()
+    {
+        DotDestroyed -= OnDotDestroyed;
+    }
+
+    private void OnDotDestroyed()
+    {
+        tempPos = GameManager.Instance.matrixTransforms[column, row];
+        transform.DOMove(tempPos, 1).OnComplete(SetDot);
+        if (TryGetComponent(out SpriteRenderer renderer)) renderer.sortingOrder = row;
+    }
+
+    private void SetDot()
+    {
+        transform.position = tempPos;
+        GameManager.Instance.allDots[column, row] = gameObject;
     }
 
     private void OnMouseUp()
@@ -44,7 +47,9 @@ public class Dot : MonoBehaviour
         {
             GameManager.Instance.isPlayable = false;
             if (transform.parent.childCount > 1)
+            {
                 GameManager.Instance.DestroyDots(group);
+            }
             else
             {
                 Debug.Log("You cannot destroy only one dot.");
