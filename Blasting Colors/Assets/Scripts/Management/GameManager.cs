@@ -22,10 +22,10 @@ public class GameManager : MonoSingleton<GameManager>
     {
         allTiles = new BackgroundTile[width, height];
         allDots = new GameObject[width, height];
-        StartCoroutine(SetUp());
+        SetUp();
     }
 
-    private IEnumerator SetUp()
+    private void SetUp()
     {
         for (int i = 0; i < width; i++)
         {
@@ -40,16 +40,16 @@ public class GameManager : MonoSingleton<GameManager>
                     GameObject dot = Instantiate(dots[dotToUse], temPos, Quaternion.identity);
                     //dot.name = "( " + i + ", " + j + " )";
                     allDots[i, j] = dot;
+                    if (dot.TryGetComponent(out Dot dotScript))
+                    {
+                        dotScript.column = i;
+                        dotScript.row = j;
+                    }
                 }
             }
         }
-
-        yield return new WaitForSeconds(0.1f);
-        //Grouping();
-        yield return new WaitForSeconds(0.1f);
-        //CheckGroups();
-        yield return new WaitForSeconds(0.1f);
-        //CheckShuffling();
+        
+        Grouping();
 
         isPlayable = true;
     }
@@ -71,7 +71,7 @@ public class GameManager : MonoSingleton<GameManager>
                 }
             }
 
-            StartCoroutine(SetUp());
+            SetUp();
         }
     }
 
@@ -87,18 +87,19 @@ public class GameManager : MonoSingleton<GameManager>
                 }
             }
         }
+        
+        CheckGroups();
     }
 
     private void RemoveGroups(int column, int row)
     {
         allDots[column, row].transform.parent = null;
-        if (allDots[column, row].GetComponent<Dot>().group != null)
+        if (allDots[column, row].TryGetComponent(out Dot dot))
         {
-            allDots[column, row].GetComponent<Dot>().group.SetActive(false);
+            dot.group.SetActive(false);
+            dot.group = null;
+            dot.CreateGroup();
         }
-
-        allDots[column, row].GetComponent<Dot>().group = null;
-        allDots[column, row].GetComponent<Dot>().CreateGroup();
     }
 
     private void CheckGroups() // Gather all adjacent dots with the same color under one group.
@@ -114,8 +115,8 @@ public class GameManager : MonoSingleton<GameManager>
                     {
                         if (allDots[i - 1, j].CompareTag(allDots[i, j].tag))
                         {
-                            allDots[i - 1, j].transform.parent.GetComponent<Grouping>()
-                                .ChangeGroup(allDots[i, j].transform.parent.gameObject);
+                            if (allDots[i - 1, j].transform.parent.TryGetComponent<Grouping>(out var grouping))
+                                grouping.ChangeGroup(allDots[i, j].transform.parent.gameObject);
                         }
                     }
                 }
@@ -127,13 +128,15 @@ public class GameManager : MonoSingleton<GameManager>
                     {
                         if (allDots[i, j - 1].tag == allDots[i, j].tag)
                         {
-                            allDots[i, j - 1].transform.parent.GetComponent<Grouping>()
-                                .ChangeGroup(allDots[i, j].transform.parent.gameObject);
+                            if (allDots[i, j - 1].transform.parent.TryGetComponent<Grouping>(out var grouping))
+                                grouping.ChangeGroup(allDots[i, j].transform.parent.gameObject);
                         }
                     }
                 }
             }
         }
+        
+        CheckShuffling();
     }
 
     private void DestroyDotsAt(int column, int row) // Destroys the selected dot.
@@ -155,16 +158,16 @@ public class GameManager : MonoSingleton<GameManager>
             }
         }
 
-        group.SetActive(false);
-        StartCoroutine(DecreaseRow());
+        Pool.Instance.DeactivateObject(group);
+        DecreaseRow();
     }
 
-    private IEnumerator DecreaseRow() // Fills the empty places.
+    private void DecreaseRow() // Fills the empty places.
     {
-        int nullCount = 0;
-        for (int i = 0; i < width; i++)
+        var nullCount = 0;
+        for (var i = 0; i < width; i++)
         {
-            for (int j = 0; j < height; j++)
+            for (var j = 0; j < height; j++)
             {
                 if (allDots[i, j] == null)
                 {
@@ -172,18 +175,19 @@ public class GameManager : MonoSingleton<GameManager>
                 }
                 else if (nullCount > 0)
                 {
-                    allDots[i, j].GetComponent<Dot>().row -= nullCount;
-                    allDots[i, allDots[i, j].GetComponent<Dot>().row] = allDots[i, j];
-                    allDots[i, j] = null;
+                    if (allDots[i, j].TryGetComponent(out Dot dot))
+                    {
+                        dot.row -= nullCount;
+                        allDots[i, dot.row] = allDots[i, j];
+                        allDots[i, j] = null;
+                    }
                 }
             }
 
             nullCount = 0;
         }
-
-        yield return new WaitForSeconds(.4f);
-        StartCoroutine(SetUp());
-        yield return new WaitForSeconds(.1f);
+        
+        SetUp();
     }
 
     private bool ShouldShuffle() // Checking if shuffling necessary.
@@ -198,10 +202,7 @@ public class GameManager : MonoSingleton<GameManager>
             }
         }
 
-        if (count > 1)
-            return false;
-        else
-            return true;
+        return count <= 1;
     }
 
     public void DeactivateEmptyGroups(GameObject deactive) // Deactivates if the group object is empty.

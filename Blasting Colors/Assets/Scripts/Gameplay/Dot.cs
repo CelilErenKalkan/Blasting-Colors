@@ -2,66 +2,39 @@
 
 public class Dot : MonoBehaviour
 {
-    public int column;
-    public int row;
+    [HideInInspector]public int column;
+    [HideInInspector]public int row;
+    [HideInInspector]public GameObject group;
     private int speed = 5;
-    [HideInInspector] public int targetX;
-    [HideInInspector] public int targetY;
-    private GameManager _gameManager;
-    private Vector2 tempPos;
-    public GameObject group;
     private SpriteRenderer spriteRenderer;
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        _gameManager = FindObjectOfType<GameManager>();
-        targetX = (int)transform.position.x;
-        targetY = (int)transform.position.y;
-        row = targetY - _gameManager.GetComponent<GameManager>().offset;
-        column = targetX;
-    }
 
     // Update is called once per frame
     void Update()
     {
-        targetX = column;
-        targetY = row;
-        if (Mathf.Abs(targetX - transform.position.x) > .1)
+        var tempPos = GameManager.Instance.matrixTransforms[column, row];
+        
+        if (Mathf.Abs(tempPos.x - transform.position.x) > .1)
         {
             //Move Towards Target.
-            tempPos = new Vector2(targetX, transform.position.y);
             transform.position = Vector2.Lerp(transform.position, tempPos, Time.deltaTime * speed);
-            if (_gameManager.allDots[column, row] != this.gameObject)
-            {
-                _gameManager.allDots[column, row] = this.gameObject;
-            }
         }
         else
         {
             //Directly Set the Position.
-            tempPos = new Vector2(targetX, transform.position.y);
             transform.position = tempPos;
-            _gameManager.allDots[column, row] = this.gameObject;
+            GameManager.Instance.allDots[column, row] = gameObject;
         }
 
-        if (Mathf.Abs(targetY - transform.position.y) > .1)
+        if (Mathf.Abs(tempPos.y - transform.position.y) > .1)
         {
             //Move Towards Target.
-            tempPos = new Vector2(transform.position.x, targetY);
             transform.position = Vector2.Lerp(transform.position, tempPos, Time.deltaTime * speed);
-            if (_gameManager.allDots[column, row] != this.gameObject)
-            {
-                _gameManager.allDots[column, row] = this.gameObject;
-            }
         }
         else
         {
             //Directly Set the Position.
-            tempPos = new Vector2(transform.position.x, targetY);
             transform.position = tempPos;
-            _gameManager.allDots[column, row] = this.gameObject;
+            GameManager.Instance.allDots[column, row] = gameObject;
         }
     }
 
@@ -71,7 +44,7 @@ public class Dot : MonoBehaviour
         {
             GameManager.Instance.isPlayable = false;
             if (transform.parent.childCount > 1)
-                _gameManager.GetComponent<GameManager>().DestroyDots(group);
+                GameManager.Instance.DestroyDots(group);
             else
             {
                 Debug.Log("You cannot destroy only one dot.");
@@ -82,7 +55,7 @@ public class Dot : MonoBehaviour
 
     public void CreateGroup()
     {
-        group = Pool.Instance.SpawnObject(transform.position,"Group", null);
+        group = Pool.Instance.SpawnObject(Vector3.zero, "Group", null);
         if (group != null)
         {
             group.SetActive(true);

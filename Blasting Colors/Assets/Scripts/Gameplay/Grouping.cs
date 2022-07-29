@@ -13,7 +13,7 @@ public class Grouping : MonoBehaviour
 
     public void ChangeGroup(GameObject otherGroup) // Changes all members group into the given group.
     {
-        if (otherGroup != this.gameObject)
+        if (otherGroup != gameObject)
         {
             List<Transform> listOfMembers = new List<Transform>();
 
@@ -32,6 +32,6 @@ public class Grouping : MonoBehaviour
     private void DeleteGroup(GameObject member, GameObject otherGroup)
     {
         member.transform.parent = otherGroup.transform;
-        member.GetComponent<Dot>().group = otherGroup;
+        if (member.TryGetComponent(out Dot dot)) dot.group = otherGroup;
     }
 }
