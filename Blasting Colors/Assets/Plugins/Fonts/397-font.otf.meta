@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 7166a92c2ecdb4facaeb5cdf5896fae5
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Marvin
+  fontNames:
+  - Marvin
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 5ba884fb631f5475d8fd8061918373a2, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

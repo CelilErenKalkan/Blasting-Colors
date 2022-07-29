@@ -72,15 +72,15 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 14e91221efa3a814b9d7314970a11d9b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 5.12, y: 5.12}
+  m_Size: {x: 7.5, y: 13.34}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &3097490491827641912
@@ -95,10 +95,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f400f818fbfe9548b515fc00fd6b4f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dots:
-  - {fileID: 7949424921106412337, guid: 4ab81c1103554f54cbeb48fc979ea151, type: 3}
-  - {fileID: 7949424921106412337, guid: 1ca2ba077a419f04aa3a245024e6a64f, type: 3}
-  - {fileID: 7949424921106412337, guid: 1e404471f7f227742824b7bc5f19e228, type: 3}
-  - {fileID: 7949424921106412337, guid: 3031f0ffcffaaaf4691e2c6e2ab1f495, type: 3}
-  - {fileID: 7949424921106412337, guid: 627e746ef0aafbb4f81d564895d83b18, type: 3}
-  - {fileID: 7949424921106412337, guid: 86c353fe5d90428498bce1cb51db507b, type: 3}
