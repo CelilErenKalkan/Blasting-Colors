@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 58247989844886969}
   - component: {fileID: 650621014115693751}
-  - component: {fileID: 3097490491827641912}
+  - component: {fileID: 5136240391390784281}
   m_Layer: 0
-  m_Name: Tile Background
+  m_Name: Border
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 7949424921106412337}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -71,19 +71,19 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: 14e91221efa3a814b9d7314970a11d9b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 7.5, y: 13.34}
+  m_DrawMode: 1
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3097490491827641912
+--- !u!114 &5136240391390784281
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,6 +92,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7949424921106412337}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f400f818fbfe9548b515fc00fd6b4f3, type: 3}
+  m_Script: {fileID: 11500000, guid: 5ab95c7000c3a55428b06bbd3d98cd82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  width: 9
+  height: 9
+  distance: 0.5

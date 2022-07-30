@@ -12,8 +12,8 @@ public class Board : MonoBehaviour
         GameManager.Instance.offset = distance;
         GameManager.Instance.matrixTransforms = new Vector2[width, height];
         
-        var amountX = width / -2;
-        var amountY = height / -2;
+        var amountX = (float)(width - 1) / -2;
+        var amountY = (float)(height - 1) / -2;
         var x = amountX * distance;
         var y = amountY * distance;
         
@@ -30,5 +30,20 @@ public class Board : MonoBehaviour
         }
 
         x = amountX * distance;
+    }
+    
+    void Start()
+    {
+        Initialize();
+    }
+    
+    void Initialize()
+    {
+        if (TryGetComponent(out SpriteRenderer spriteRenderer))
+        {
+            var borderWidth = width + 0.2f;
+            var borderHeight = this.height + 0.4f;
+            spriteRenderer.size = new Vector2(borderWidth, borderHeight);
+        }
     }
 }

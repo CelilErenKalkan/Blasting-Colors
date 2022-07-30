@@ -753,6 +753,9 @@
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>C:/Users/celil/OneDrive/Belgeler/GitHub/Blasting-Colors/Blasting Colors/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
  </Reference>
+ <Reference Include="Unity.DeviceSimulator.Editor">
+ <HintPath>C:/Users/celil/OneDrive/Belgeler/GitHub/Blasting-Colors/Blasting Colors/Library/ScriptAssemblies/Unity.DeviceSimulator.Editor.dll</HintPath>
+ </Reference>
  <Reference Include="Unity.Mathematics.Editor">
  <HintPath>C:/Users/celil/OneDrive/Belgeler/GitHub/Blasting-Colors/Blasting Colors/Library/ScriptAssemblies/Unity.Mathematics.Editor.dll</HintPath>
  </Reference>
@@ -767,9 +770,6 @@
  </Reference>
  <Reference Include="Unity.2D.SpriteShape.Runtime">
  <HintPath>C:/Users/celil/OneDrive/Belgeler/GitHub/Blasting-Colors/Blasting Colors/Library/ScriptAssemblies/Unity.2D.SpriteShape.Runtime.dll</HintPath>
- </Reference>
- <Reference Include="Unity.DeviceSimulator.Editor">
- <HintPath>C:/Users/celil/OneDrive/Belgeler/GitHub/Blasting-Colors/Blasting Colors/Library/ScriptAssemblies/Unity.DeviceSimulator.Editor.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>
