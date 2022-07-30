@@ -18,12 +18,12 @@ public class Goals : MonoBehaviour
 
     private void OnEnable()
     {
-        DotDestroyed += SetGoalTexts;
+        GoalAmountChanged += SetGoalTexts;
     }
     
     private void OnDisable()
     {
-        DotDestroyed -= SetGoalTexts;
+        GoalAmountChanged -= SetGoalTexts;
     }
 
     private void SetGoals()

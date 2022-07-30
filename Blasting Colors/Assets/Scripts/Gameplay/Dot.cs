@@ -10,6 +10,7 @@ public class Dot : MonoBehaviour
     [HideInInspector]public GameObject group;
     private Vector2 tempPos;
     private SpriteRenderer spriteRenderer;
+    private int goalNo;
 
 
     private bool isDestroyed;
@@ -33,7 +34,7 @@ public class Dot : MonoBehaviour
     {
         if (isDestroyed) return;
         tempPos = GameManager.Instance.matrixTransforms[column, row];
-        transform.DOMove(tempPos, 0.5f).OnComplete(SetDot);
+        transform.DOMove(tempPos, 1f).SetEase(Ease.OutBounce).OnComplete(SetDot);
         if (TryGetComponent(out SpriteRenderer renderer)) renderer.sortingOrder = row;
     }
 
@@ -70,17 +71,22 @@ public class Dot : MonoBehaviour
         }
     }
 
-    public void JumpToGoal(Vector3 goalPosition)
+    public void JumpToGoal(int goalNo)
     {
+        this.goalNo = goalNo;
         if (TryGetComponent(out SpriteRenderer spriteRenderer))
             spriteRenderer.sortingOrder = 21;
         transform.SetParent(null);
         isDestroyed = true;
+
+        var goalPosition = GameManager.Instance.goalList[goalNo].transform.position;
         transform.DOJump(goalPosition, -5, 1, 1).OnComplete(DestroyThisDot);
     }
 
     public void DestroyThisDot()
     {
+        GameManager.Instance.goalAmounts[goalNo]--;
+        GoalAmountChanged?.Invoke();
         Destroy(gameObject);
     }
 

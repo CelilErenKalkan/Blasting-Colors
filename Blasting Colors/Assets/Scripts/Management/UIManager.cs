@@ -44,13 +44,13 @@ public class UIManager : MonoBehaviour
 
     private void OnLevelSuccess()
     {
-        isLevelSuccess = true;
-        canvasHelper.SetPanel(CanvasPanel.Success, true);
+        //isLevelSuccess = true;
+        //canvasHelper.SetPanel(CanvasPanel.Success, true);
     }
 
     private void OnLevelFailed()
     {
-        canvasHelper.SetPanel(CanvasPanel.Fail, true);
+        //canvasHelper.SetPanel(CanvasPanel.Fail, true);
     }
 
     public void LoadLevel()

@@ -1,23 +1,25 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using static Actions;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoSingleton<GameManager>
 {
     [HideInInspector] public int width;
     [HideInInspector] public int height;
+    [HideInInspector]public float offset;
+    [HideInInspector]public bool isPlayable;
+    [HideInInspector]public List<GameObject> goalList = new List<GameObject>();
+    
     public int moves = 30;
     public List<int> goalAmounts;
-    [HideInInspector]public float offset;
     private GameObject groups;
     public GameObject[,] allDots;
     public Vector2[,] matrixTransforms;
-    [HideInInspector]public bool isPlayable;
-
     public GameObject[] dots;
-    [HideInInspector]public List<GameObject> goalList = new List<GameObject>();
 
 
     // Start is called before the first frame update
@@ -28,6 +30,40 @@ public class GameManager : MonoSingleton<GameManager>
         InitialSetUp();
     }
 
+    private void OnEnable()
+    {
+        DotDestroyed += CheckIsGameFinished;
+        GoalAmountChanged += CheckIsGameFinished;
+    }
+    
+    private void OnDisable()
+    {
+        DotDestroyed -= CheckIsGameFinished;
+        GoalAmountChanged -= CheckIsGameFinished;
+    }
+
+    private void CheckIsGameFinished()
+    {
+        var isgoalAmountFinished = true;
+        foreach (var goalAmount in goalAmounts)
+        {
+            if (goalAmount > 0) isgoalAmountFinished = false;
+        }
+        
+        if (isgoalAmountFinished)
+        {
+            isPlayable = false;
+            LevelSuccess?.Invoke();
+        }
+        else if (moves <= 0)
+        {
+            isPlayable = false;
+            LevelFailed?.Invoke();
+        }
+    }
+
+    #region GameplayMechanic
+    
     private void InitialSetUp()
     {
         for (int i = 0; i < width; i++)
@@ -89,9 +125,7 @@ public class GameManager : MonoSingleton<GameManager>
 
         isPlayable = true;
     }
-
-    #region SetUp
-
+    
     private void CheckShuffling() // Shuffles if all the dots are different from each other.
     {
         if (ShouldShuffle())
@@ -197,9 +231,8 @@ public class GameManager : MonoSingleton<GameManager>
                     {
                         if (allDots[i, j].TryGetComponent(out Dot dot))
                         {
-                            dot.JumpToGoal(goalList[0].transform.position);
+                            dot.JumpToGoal(0);
                             allDots[i, j] = null;
-                            goalAmounts[0]--;
                         }
 
                         yield return new WaitForSeconds(0.05f);
@@ -208,9 +241,8 @@ public class GameManager : MonoSingleton<GameManager>
                     {
                         if (allDots[i, j].TryGetComponent(out Dot dot))
                         {
-                            dot.JumpToGoal(goalList[1].transform.position);
+                            dot.JumpToGoal(1);
                             allDots[i, j] = null;
-                            goalAmounts[1]--;
                         }
                         
                         yield return new WaitForSeconds(0.05f);
