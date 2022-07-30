@@ -750,17 +750,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 6
   height: 8
-  moves: 30
-  goalAmounts: 1900000019000000
   offset: 0
   isPlayable: 0
+  goalList: []
+  moves: 30
+  goalAmounts: 1900000019000000
   dots:
   - {fileID: 7949424921106412337, guid: 4ab81c1103554f54cbeb48fc979ea151, type: 3}
   - {fileID: 7949424921106412337, guid: 1ca2ba077a419f04aa3a245024e6a64f, type: 3}
   - {fileID: 7949424921106412337, guid: 3031f0ffcffaaaf4691e2c6e2ab1f495, type: 3}
   - {fileID: 7949424921106412337, guid: 627e746ef0aafbb4f81d564895d83b18, type: 3}
   - {fileID: 7949424921106412337, guid: 86c353fe5d90428498bce1cb51db507b, type: 3}
-  goalList: []
 --- !u!114 &935568469
 MonoBehaviour:
   m_ObjectHideFlags: 0

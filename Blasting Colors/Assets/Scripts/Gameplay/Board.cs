@@ -12,9 +12,10 @@ public class Board : MonoBehaviour
         GameManager.Instance.offset = distance;
         GameManager.Instance.matrixTransforms = new Vector2[width, height];
         
-        var currentPos = transform.position;
-        var x = currentPos.x;
-        var y = currentPos.y;
+        var amountX = width / -2;
+        var amountY = height / -2;
+        var x = amountX * distance;
+        var y = amountY * distance;
         
         for (int i = 0; i < width; i++)
         {
@@ -24,10 +25,10 @@ public class Board : MonoBehaviour
                 y += distance;
             }
 
-            y = currentPos.y;
+            y = amountY * distance;
             x += distance;
         }
 
-        x = currentPos.x;
+        x = amountX * distance;
     }
 }

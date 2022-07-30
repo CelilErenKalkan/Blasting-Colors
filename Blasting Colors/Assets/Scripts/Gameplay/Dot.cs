@@ -34,7 +34,7 @@ public class Dot : MonoBehaviour
     {
         if (isDestroyed) return;
         tempPos = GameManager.Instance.matrixTransforms[column, row];
-        transform.DOMove(tempPos, 1f).SetEase(Ease.OutBounce).OnComplete(SetDot);
+        transform.DOMove(tempPos, 0.5f).SetEase(Ease.OutBounce).OnComplete(SetDot);
         if (TryGetComponent(out SpriteRenderer renderer)) renderer.sortingOrder = row;
     }
 
