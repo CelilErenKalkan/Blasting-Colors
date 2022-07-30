@@ -55,7 +55,7 @@ public class Dot : MonoBehaviour
             }
             else
             {
-                Debug.Log("You cannot destroy only one dot.");
+                if (TryGetComponent(out Animator animator)) animator.SetTrigger("isWrong");
                 GameManager.Instance.isPlayable = true;
             }
         }

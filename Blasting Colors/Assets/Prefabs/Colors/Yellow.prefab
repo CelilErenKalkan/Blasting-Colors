@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 650621014115693751}
   - component: {fileID: 3400861138398611395}
   - component: {fileID: 5545851692674632758}
+  - component: {fileID: 5783535167680591778}
   m_Layer: 0
   m_Name: Yellow
   m_TagString: Yellow
@@ -125,3 +126,22 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1.2}
   m_EdgeRadius: 0
+--- !u!95 &5783535167680591778
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7949424921106412337}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d29e2ce7e0def3d47b6c1750751c66b2, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
