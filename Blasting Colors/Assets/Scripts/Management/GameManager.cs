@@ -72,13 +72,11 @@ public class GameManager : MonoSingleton<GameManager>
             {
                 if (allDots[i, j] == null)
                 {
-                    //Vector2 temPos = new Vector2(i, j + offset);
                     Vector2 temPos = matrixTransforms[i, j];
                     temPos.y += offset * j * 0.5f;
                     int dotToUse = Random.Range(0, dots.Length);
 
                     GameObject dot = Instantiate(dots[dotToUse], temPos, Quaternion.identity);
-                    //dot.name = "( " + i + ", " + j + " )";
                     allDots[i, j] = dot;
                     if (dot.TryGetComponent(out Dot dotScript))
                     {
@@ -102,13 +100,11 @@ public class GameManager : MonoSingleton<GameManager>
             {
                 if (allDots[i, j] == null)
                 {
-                    //Vector2 temPos = new Vector2(i, j + offset);
                     Vector2 temPos = matrixTransforms[i, j];
                     temPos.y += offset * j * 0.5f;
                     int dotToUse = Random.Range(0, dots.Length);
 
                     GameObject dot = Instantiate(dots[dotToUse], temPos, Quaternion.identity);
-                    //dot.name = "( " + i + ", " + j + " )";
                     allDots[i, j] = dot;
                     if (dot.TryGetComponent(out Dot dotScript))
                     {

@@ -775,6 +775,9 @@
  <Reference Include="Unity.2D.SpriteShape.Runtime">
  <HintPath>C:/Users/celil/OneDrive/Belgeler/GitHub/Blasting-Colors/Blasting Colors/Library/ScriptAssemblies/Unity.2D.SpriteShape.Runtime.dll</HintPath>
  </Reference>
+ <Reference Include="Unity.DeviceSimulator.Editor">
+ <HintPath>C:/Users/celil/OneDrive/Belgeler/GitHub/Blasting-Colors/Blasting Colors/Library/ScriptAssemblies/Unity.DeviceSimulator.Editor.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp.csproj">
