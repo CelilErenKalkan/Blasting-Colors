@@ -60,6 +60,7 @@
      <Compile Include="Assets\Scripts\Management\Pool.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Board.cs" />
      <Compile Include="Assets\Scripts\BackgroundTile.cs" />
+     <Compile Include="Assets\Scripts\Goals.cs" />
      <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModulePhysics2D.cs" />
      <Compile Include="Assets\Demigiant\DOTweenPro\DOTweenAnimation.cs" />
      <Compile Include="Assets\Demigiant\DOTweenPro\DOTweenTk2d.cs" />
@@ -72,11 +73,10 @@
      <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUtils.cs" />
      <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUI.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Dot.cs" />
-     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleAudio.cs" />
-     <Compile Include="Assets\Scripts\Screen Adjustment\CameraViewportHandler.cs" />
      <Compile Include="Assets\Scripts\Management\UIManager.cs" />
+     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleAudio.cs" />
      <Compile Include="Assets\Scripts\Management\CanvasHelper.cs" />
-     <Compile Include="Assets\Scripts\Goals.cs" />
+     <Compile Include="Assets\Scripts\Screen Adjustment\CameraViewportHandler.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />

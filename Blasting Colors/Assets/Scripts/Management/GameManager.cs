@@ -153,7 +153,7 @@ public class GameManager : MonoSingleton<GameManager>
         allDots[column, row] = null;
     }
 
-    public void DestroyDots(GameObject group) // Destroy all the dots in the selected dot.
+    public IEnumerator DestroyDots(GameObject group) // Destroy all the dots in the selected dot.
     {
         for (int i = 0; i < width; i++)
         {
@@ -167,7 +167,10 @@ public class GameManager : MonoSingleton<GameManager>
                         {
                             dot.JumpToGoal(goalList[0].transform.position);
                             allDots[i, j] = null;
+                            goalAmounts[0]--;
                         }
+
+                        yield return new WaitForSeconds(0.1f);
                     }
                     else if (allDots[i, j].CompareTag(goalList[1].tag))
                     {
@@ -175,8 +178,10 @@ public class GameManager : MonoSingleton<GameManager>
                         {
                             dot.JumpToGoal(goalList[1].transform.position);
                             allDots[i, j] = null;
+                            goalAmounts[1]--;
                         }
                         
+                        yield return new WaitForSeconds(0.1f);
                     }
                     else
                         DestroyDotsAt(i, j);
@@ -185,10 +190,10 @@ public class GameManager : MonoSingleton<GameManager>
         }
 
         Pool.Instance.DeactivateObject(group);
-        DecreaseRow();
+        StartCoroutine(DecreaseRow());
     }
 
-    private void DecreaseRow() // Fills the empty places.
+    private IEnumerator DecreaseRow() // Fills the empty places.
     {
         var nullCount = 0;
         for (var i = 0; i < width; i++)
@@ -206,6 +211,8 @@ public class GameManager : MonoSingleton<GameManager>
                         dot.row -= nullCount;
                         allDots[i, dot.row] = allDots[i, j];
                         allDots[i, j] = null;
+
+                        yield return new WaitForSeconds(0.1f);
                     }
                 }
             }

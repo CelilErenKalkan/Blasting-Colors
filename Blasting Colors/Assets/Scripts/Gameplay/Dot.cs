@@ -47,7 +47,7 @@ public class Dot : MonoBehaviour
             GameManager.Instance.isPlayable = false;
             if (transform.parent.childCount > 1)
             {
-                GameManager.Instance.DestroyDots(group);
+                StartCoroutine(GameManager.Instance.DestroyDots(group));
             }
             else
             {

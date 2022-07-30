@@ -1,7 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
+using static Actions;
 
 public class Goals : MonoBehaviour
 {
@@ -9,12 +13,17 @@ public class Goals : MonoBehaviour
     void Start()
     { 
         SetGoals();
+        SetGoalTexts();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnEnable()
     {
-        
+        DotDestroyed += SetGoalTexts;
+    }
+    
+    private void OnDisable()
+    {
+        DotDestroyed -= SetGoalTexts;
     }
 
     private void SetGoals()
@@ -24,12 +33,24 @@ public class Goals : MonoBehaviour
             var random = Random.Range(0, GameManager.Instance.dots.Length);
             var goalName = "Goal" + i;
             var goalDotNo = PlayerPrefs.GetInt(goalName, random);
+            
             GameManager.Instance.goalList.Add(transform.GetChild(i).gameObject);
             transform.GetChild(i).tag = GameManager.Instance.dots[goalDotNo].tag;
+            
             if (transform.GetChild(i).TryGetComponent(out Image image) &&
                 GameManager.Instance.dots[goalDotNo].TryGetComponent(out SpriteRenderer dotImage))
                 image.sprite = dotImage.sprite;
             PlayerPrefs.SetInt(goalName, goalDotNo);
+        }
+    }
+
+    private void SetGoalTexts()
+    {
+        var count = GameManager.Instance.goalAmounts.Count;
+        for (var i = 0; i < count; i++)
+        {
+            if (transform.GetChild(i).GetChild(0).TryGetComponent(out TMP_Text text))
+                text.text = GameManager.Instance.goalAmounts[i].ToString();
         }
     }
 }
