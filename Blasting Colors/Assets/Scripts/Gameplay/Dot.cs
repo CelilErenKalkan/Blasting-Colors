@@ -12,6 +12,8 @@ public class Dot : MonoBehaviour
     private SpriteRenderer spriteRenderer;
 
 
+    private bool isDestroyed;
+
     private void Start()
     {
         OnDotDestroyed();
@@ -29,8 +31,9 @@ public class Dot : MonoBehaviour
 
     private void OnDotDestroyed()
     {
+        if (isDestroyed) return;
         tempPos = GameManager.Instance.matrixTransforms[column, row];
-        transform.DOMove(tempPos, 1).OnComplete(SetDot);
+        transform.DOMove(tempPos, 0.5f).OnComplete(SetDot);
         if (TryGetComponent(out SpriteRenderer renderer)) renderer.sortingOrder = row;
     }
 
@@ -71,7 +74,9 @@ public class Dot : MonoBehaviour
     {
         if (TryGetComponent(out SpriteRenderer spriteRenderer))
             spriteRenderer.sortingOrder = 21;
-        transform.DOJump(goalPosition, 1, 1, 1).OnComplete(DestroyThisDot);
+        transform.SetParent(null);
+        isDestroyed = true;
+        transform.DOJump(goalPosition, -5, 1, 1).OnComplete(DestroyThisDot);
     }
 
     public void DestroyThisDot()

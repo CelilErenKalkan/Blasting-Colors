@@ -25,10 +25,10 @@ public class GameManager : MonoSingleton<GameManager>
     {
         moves = 30;
         allDots = new GameObject[width, height];
-        SetUp();
+        InitialSetUp();
     }
 
-    private void SetUp()
+    private void InitialSetUp()
     {
         for (int i = 0; i < width; i++)
         {
@@ -58,6 +58,38 @@ public class GameManager : MonoSingleton<GameManager>
         isPlayable = true;
     }
 
+    private IEnumerator SetUp()
+    {
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                if (allDots[i, j] == null)
+                {
+                    //Vector2 temPos = new Vector2(i, j + offset);
+                    Vector2 temPos = matrixTransforms[i, j];
+                    temPos.y += offset * j * 0.5f;
+                    int dotToUse = Random.Range(0, dots.Length);
+
+                    GameObject dot = Instantiate(dots[dotToUse], temPos, Quaternion.identity);
+                    //dot.name = "( " + i + ", " + j + " )";
+                    allDots[i, j] = dot;
+                    if (dot.TryGetComponent(out Dot dotScript))
+                    {
+                        dotScript.column = i;
+                        dotScript.row = j;
+                    }
+
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }
+        }
+
+        Grouping();
+
+        isPlayable = true;
+    }
+
     #region SetUp
 
     private void CheckShuffling() // Shuffles if all the dots are different from each other.
@@ -75,7 +107,7 @@ public class GameManager : MonoSingleton<GameManager>
                 }
             }
 
-            SetUp();
+            StartCoroutine(SetUp());
         }
     }
 
@@ -170,7 +202,7 @@ public class GameManager : MonoSingleton<GameManager>
                             goalAmounts[0]--;
                         }
 
-                        yield return new WaitForSeconds(0.1f);
+                        yield return new WaitForSeconds(0.05f);
                     }
                     else if (allDots[i, j].CompareTag(goalList[1].tag))
                     {
@@ -181,7 +213,7 @@ public class GameManager : MonoSingleton<GameManager>
                             goalAmounts[1]--;
                         }
                         
-                        yield return new WaitForSeconds(0.1f);
+                        yield return new WaitForSeconds(0.05f);
                     }
                     else
                         DestroyDotsAt(i, j);
@@ -190,10 +222,10 @@ public class GameManager : MonoSingleton<GameManager>
         }
 
         Pool.Instance.DeactivateObject(group);
-        StartCoroutine(DecreaseRow());
+        DecreaseRow();
     }
 
-    private IEnumerator DecreaseRow() // Fills the empty places.
+    private void DecreaseRow() // Fills the empty places.
     {
         var nullCount = 0;
         for (var i = 0; i < width; i++)
@@ -211,8 +243,6 @@ public class GameManager : MonoSingleton<GameManager>
                         dot.row -= nullCount;
                         allDots[i, dot.row] = allDots[i, j];
                         allDots[i, j] = null;
-
-                        yield return new WaitForSeconds(0.1f);
                     }
                 }
             }
@@ -221,7 +251,7 @@ public class GameManager : MonoSingleton<GameManager>
         }
 
         DotDestroyed?.Invoke();
-        SetUp();
+        StartCoroutine(SetUp());
     }
 
     private bool ShouldShuffle() // Checking if shuffling necessary.

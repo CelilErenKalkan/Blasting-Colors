@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -125,6 +126,27 @@ public class Pool : MonoSingleton<Pool>
             b.SetActive(true);
         }
 
+        return b;
+    }
+    
+    public GameObject SpawnObject(Vector3 position, string theTag, Transform parent, float time)
+    {
+        var b = GetFromPool(theTag);
+        if (b != null)
+        {
+            if (parent != null) b.transform.SetParent(parent);
+            if (position != null) b.transform.position = position;
+            b.SetActive(true);
+        }
+        
+        StartCoroutine(Timer());
+        
+        IEnumerator Timer()
+        {
+            yield return new WaitForSeconds(time);
+            DeactivateObject(b);
+        }
+        
         return b;
     }
 
