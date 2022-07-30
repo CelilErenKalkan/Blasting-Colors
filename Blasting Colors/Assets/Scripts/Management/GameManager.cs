@@ -1,25 +1,29 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using DG.Tweening;
+using UnityEngine;
 using static Actions;
 
 public class GameManager : MonoSingleton<GameManager>
 {
-    [HideInInspector]public int width;
-    [HideInInspector]public int height;
-    public float offset;
-    public GameObject tilePrefab;
+    [HideInInspector] public int width;
+    [HideInInspector] public int height;
+    public int moves = 30;
+    public List<int> goalAmounts;
+    [HideInInspector]public float offset;
     private GameObject groups;
-    private BackgroundTile[,] allTiles;
     public GameObject[,] allDots;
     public Vector2[,] matrixTransforms;
-    public bool isPlayable;
+    [HideInInspector]public bool isPlayable;
 
     public GameObject[] dots;
+    [HideInInspector]public List<GameObject> goalList = new List<GameObject>();
 
 
     // Start is called before the first frame update
     void Start()
     {
-        allTiles = new BackgroundTile[width, height];
+        moves = 30;
         allDots = new GameObject[width, height];
         SetUp();
     }
@@ -33,7 +37,7 @@ public class GameManager : MonoSingleton<GameManager>
                 if (allDots[i, j] == null)
                 {
                     //Vector2 temPos = new Vector2(i, j + offset);
-                    Vector2 temPos = matrixTransforms[i,j];
+                    Vector2 temPos = matrixTransforms[i, j];
                     temPos.y += offset * j * 0.5f;
                     int dotToUse = Random.Range(0, dots.Length);
 
@@ -48,7 +52,7 @@ public class GameManager : MonoSingleton<GameManager>
                 }
             }
         }
-        
+
         Grouping();
 
         isPlayable = true;
@@ -87,7 +91,7 @@ public class GameManager : MonoSingleton<GameManager>
                 }
             }
         }
-        
+
         CheckGroups();
     }
 
@@ -101,6 +105,7 @@ public class GameManager : MonoSingleton<GameManager>
                 dot.group.SetActive(false);
                 dot.group = null;
             }
+
             dot.CreateGroup();
         }
     }
@@ -138,11 +143,11 @@ public class GameManager : MonoSingleton<GameManager>
                 }
             }
         }
-        
+
         CheckShuffling();
     }
 
-    private void DestroyDotsAt(int column, int row) // Destroys the selected dot.
+    public void DestroyDotsAt(int column, int row) // Destroys the selected dot.
     {
         Destroy(allDots[column, row]);
         allDots[column, row] = null;
@@ -156,7 +161,25 @@ public class GameManager : MonoSingleton<GameManager>
             {
                 if (allDots[i, j] != null && allDots[i, j].transform.parent == group.transform)
                 {
-                    DestroyDotsAt(i, j);
+                    if (allDots[i, j].CompareTag(goalList[0].tag))
+                    {
+                        if (allDots[i, j].TryGetComponent(out Dot dot))
+                        {
+                            dot.JumpToGoal(goalList[0].transform.position);
+                            allDots[i, j] = null;
+                        }
+                    }
+                    else if (allDots[i, j].CompareTag(goalList[1].tag))
+                    {
+                        if (allDots[i, j].TryGetComponent(out Dot dot))
+                        {
+                            dot.JumpToGoal(goalList[1].transform.position);
+                            allDots[i, j] = null;
+                        }
+                        
+                    }
+                    else
+                        DestroyDotsAt(i, j);
                 }
             }
         }
@@ -189,7 +212,7 @@ public class GameManager : MonoSingleton<GameManager>
 
             nullCount = 0;
         }
-        
+
         DotDestroyed?.Invoke();
         SetUp();
     }

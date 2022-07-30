@@ -8,7 +8,6 @@ public class Dot : MonoBehaviour
     [HideInInspector]public int column;
     [HideInInspector]public int row;
     [HideInInspector]public GameObject group;
-    private int speed = 5;
     private Vector2 tempPos;
     private SpriteRenderer spriteRenderer;
 
@@ -66,6 +65,18 @@ public class Dot : MonoBehaviour
             group.SetActive(true);
             transform.SetParent(group.transform);
         }
+    }
+
+    public void JumpToGoal(Vector3 goalPosition)
+    {
+        if (TryGetComponent(out SpriteRenderer spriteRenderer))
+            spriteRenderer.sortingOrder = 21;
+        transform.DOJump(goalPosition, 1, 1, 1).OnComplete(DestroyThisDot);
+    }
+
+    public void DestroyThisDot()
+    {
+        Destroy(gameObject);
     }
 
 }
