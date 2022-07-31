@@ -9,21 +9,16 @@ using static Actions;
 
 public class Goals : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    { 
-        SetGoals();
-        SetGoalTexts();
-    }
-
     private void OnEnable()
     {
         GoalAmountChanged += SetGoalTexts;
+        LevelStart += SetGoals;
     }
     
     private void OnDisable()
     {
         GoalAmountChanged -= SetGoalTexts;
+        LevelStart -= SetGoals;
     }
 
     private void SetGoals()
@@ -36,12 +31,17 @@ public class Goals : MonoBehaviour
             
             GameManager.Instance.goalList.Add(transform.GetChild(i).gameObject);
             transform.GetChild(i).tag = GameManager.Instance.cubes[goalCubeNo].tag;
-            
+
             if (transform.GetChild(i).TryGetComponent(out Image image) &&
                 GameManager.Instance.cubes[goalCubeNo].TryGetComponent(out SpriteRenderer cubeImage))
+            {
                 image.sprite = cubeImage.sprite;
+                image.enabled = true;
+            }
             PlayerPrefs.SetInt(goalName, goalCubeNo);
         }
+        
+        SetGoalTexts();
     }
 
     private void SetGoalTexts()
@@ -50,7 +50,12 @@ public class Goals : MonoBehaviour
         for (var i = 0; i < count; i++)
         {
             if (transform.GetChild(i).GetChild(0).TryGetComponent(out TMP_Text text))
-                text.text = GameManager.Instance.goalAmounts[i].ToString();
+            {
+                if (GameManager.Instance.goalAmounts[i] > 0)
+                    text.text = GameManager.Instance.goalAmounts[i].ToString();
+                else
+                    text.text = " ";
+            }
         }
     }
 }

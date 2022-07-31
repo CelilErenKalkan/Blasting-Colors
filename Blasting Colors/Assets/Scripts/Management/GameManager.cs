@@ -38,7 +38,8 @@ public class GameManager : MonoSingleton<GameManager>
     {
         moves = 30;
         allCubes = new GameObject[width, height];
-        InitialSetUp();
+        //InitialSetUp();
+        StartCoroutine(SetUp(1));
     }
 
     private void CheckIsGameFinished()
@@ -62,36 +63,8 @@ public class GameManager : MonoSingleton<GameManager>
     }
 
     #region GameplayMechanic
-    
-    private void InitialSetUp()
-    {
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
-                if (allCubes[i, j] == null)
-                {
-                    Vector2 temPos = matrixTransforms[i, j];
-                    temPos.y += offset * j * 0.5f;
-                    int cubeToUse = Random.Range(0, cubes.Length);
 
-                    GameObject cube = Instantiate(cubes[cubeToUse], temPos, Quaternion.identity);
-                    allCubes[i, j] = cube;
-                    if (cube.TryGetComponent(out Cube cubeScript))
-                    {
-                        cubeScript.column = i;
-                        cubeScript.row = j;
-                    }
-                }
-            }
-        }
-
-        Grouping();
-
-        isPlayable = true;
-    }
-
-    private IEnumerator SetUp()
+    private IEnumerator SetUp(float timeIndex)
     {
         for (int i = 0; i < width; i++)
         {
@@ -111,7 +84,7 @@ public class GameManager : MonoSingleton<GameManager>
                         cubeScript.row = j;
                     }
 
-                    yield return new WaitForSeconds(0.05f);
+                    yield return new WaitForSeconds(0.005f * timeIndex);
                 }
             }
         }
@@ -136,7 +109,7 @@ public class GameManager : MonoSingleton<GameManager>
                 }
             }
 
-            StartCoroutine(SetUp());
+            StartCoroutine(SetUp(10));
         }
     }
 
@@ -278,7 +251,7 @@ public class GameManager : MonoSingleton<GameManager>
         }
 
         TurnEnded?.Invoke();
-        StartCoroutine(SetUp());
+        StartCoroutine(SetUp(10));
     }
 
     private bool ShouldShuffle() // Checking if shuffling necessary.
