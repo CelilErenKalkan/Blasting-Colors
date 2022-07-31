@@ -1,21 +1,15 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
 using static Actions;
 
 
 public class UIManager : MonoBehaviour
 {
-    private int levelNo;
-    private bool isLevelSuccess;
     private CanvasHelper canvasHelper;
 
     private void Start()
     {
-        levelNo = PlayerPrefs.GetInt("LevelNo", 1);
         if (TryGetComponent<CanvasHelper>(out var helper)) canvasHelper = helper;
-        canvasHelper.SetLevelText(levelNo);
         canvasHelper.SetMovesText();
     }
 
@@ -39,32 +33,23 @@ public class UIManager : MonoBehaviour
         ButtonTapped?.Invoke();
         canvasHelper.SetPanel(CanvasPanel.Start, false);
         
-        //GameManager.Instance.isPlayable = true;
+        GameManager.Instance.isPlayable = true;
     }
 
     private void OnLevelSuccess()
     {
-        //isLevelSuccess = true;
-        //canvasHelper.SetPanel(CanvasPanel.Success, true);
+        canvasHelper.SetPanel(CanvasPanel.Success, true);
     }
 
     private void OnLevelFailed()
     {
-        //canvasHelper.SetPanel(CanvasPanel.Fail, true);
+        canvasHelper.SetPanel(CanvasPanel.Fail, true);
     }
 
     public void LoadLevel()
     {
-        if (isLevelSuccess)
-        {
-            levelNo++;
-        }
-
-        isLevelSuccess = false;
-        PlayerPrefs.SetInt("LevelNo", levelNo);
-        
         ButtonTapped?.Invoke();
-        SceneManager.LoadScene(sceneBuildIndex: 1);
+        SceneManager.LoadScene(sceneBuildIndex: 0);
     }
 
     private void OnDotDestroyed()

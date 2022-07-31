@@ -25,21 +25,28 @@ public class GameManager : MonoSingleton<GameManager>
     // Start is called before the first frame update
     void Start()
     {
-        moves = 30;
-        allDots = new GameObject[width, height];
-        InitialSetUp();
+        
     }
 
     private void OnEnable()
     {
         DotDestroyed += CheckIsGameFinished;
         GoalAmountChanged += CheckIsGameFinished;
+        LevelStart += OnGameStarted;
     }
     
     private void OnDisable()
     {
         DotDestroyed -= CheckIsGameFinished;
         GoalAmountChanged -= CheckIsGameFinished;
+        LevelStart -= OnGameStarted;
+    }
+
+    private void OnGameStarted()
+    {
+        moves = 30;
+        allDots = new GameObject[width, height];
+        InitialSetUp();
     }
 
     private void CheckIsGameFinished()

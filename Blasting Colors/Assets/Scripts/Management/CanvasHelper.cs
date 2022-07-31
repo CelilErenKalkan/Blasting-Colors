@@ -7,12 +7,10 @@ public class CanvasHelper : MonoSingleton<CanvasHelper>
 {
     [Header("Game Panels")] [SerializeField]
     private GameObject startPanel;
-
-    [SerializeField] private GameObject mainPanel;
+    
     [SerializeField] private GameObject successPanel;
     [SerializeField] private GameObject failPanel;
-
-    [Header("Texts")] [SerializeField] private TMP_Text levelText;
+    
     [Header("Texts")] [SerializeField] private TMP_Text movesText;
 
     /// <summary>
@@ -25,9 +23,6 @@ public class CanvasHelper : MonoSingleton<CanvasHelper>
             case CanvasPanel.Start:
                 startPanel.SetActive(state);
                 return;
-            case CanvasPanel.Main:
-                mainPanel.SetActive(state);
-                return;
             case CanvasPanel.Success:
                 successPanel.SetActive(state);
                 return;
@@ -39,14 +34,6 @@ public class CanvasHelper : MonoSingleton<CanvasHelper>
         }
     }
 
-    /// <summary>
-    /// Set level number text.
-    /// </summary>
-    public void SetLevelText(int levelNo)
-    {
-        //levelText.text = "Level " + levelNo;
-    }
-    
     public void SetMovesText()
     {
         movesText.text = GameManager.Instance.moves.ToString();
@@ -56,7 +43,6 @@ public class CanvasHelper : MonoSingleton<CanvasHelper>
 public enum CanvasPanel
 {
     Start,
-    Main,
     Success,
     Fail,
 }

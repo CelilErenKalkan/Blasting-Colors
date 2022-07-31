@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using static Actions;
 
 public class Board : MonoBehaviour
 {
@@ -31,19 +33,25 @@ public class Board : MonoBehaviour
 
         x = amountX * distance;
     }
-    
-    void Start()
+
+    private void OnEnable()
     {
-        Initialize();
+        LevelStart += OnGameStarted;
     }
     
-    void Initialize()
+    private void OnDisable()
+    {
+        LevelStart -= OnGameStarted;
+    }
+
+    private void OnGameStarted()
     {
         if (TryGetComponent(out SpriteRenderer spriteRenderer))
         {
             var borderWidth = width + 0.2f;
             var borderHeight = this.height + 0.4f;
             spriteRenderer.size = new Vector2(borderWidth, borderHeight);
+            spriteRenderer.enabled = true;
         }
     }
 }
