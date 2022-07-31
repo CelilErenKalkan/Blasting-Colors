@@ -9,6 +9,8 @@ using static Actions;
 
 public class Goals : MonoBehaviour
 {
+    private int random;
+    
     private void OnEnable()
     {
         GoalAmountChanged += SetGoalTexts;
@@ -23,17 +25,24 @@ public class Goals : MonoBehaviour
 
     private void SetGoals()
     {
+        var manager = GameManager.Instance;
+        
         for (var i = 0; i < 2; i++)
         {
-            var random = Random.Range(0, GameManager.Instance.cubes.Length);
+            random = Random.Range(0, 5);
             var goalName = "Goal" + i;
             var goalCubeNo = PlayerPrefs.GetInt(goalName, random);
+
+            if (i > 0 && manager.cubes[goalCubeNo].CompareTag(manager.goalList[i - 1].tag))
+            {
+                random = GetExcludedRandomValue();
+            }
             
-            GameManager.Instance.goalList.Add(transform.GetChild(i).gameObject);
-            transform.GetChild(i).tag = GameManager.Instance.cubes[goalCubeNo].tag;
+            manager.goalList.Add(transform.GetChild(i).gameObject);
+            transform.GetChild(i).tag = manager.cubes[goalCubeNo].tag;
 
             if (transform.GetChild(i).TryGetComponent(out Image image) &&
-                GameManager.Instance.cubes[goalCubeNo].TryGetComponent(out SpriteRenderer cubeImage))
+                manager.cubes[goalCubeNo].TryGetComponent(out SpriteRenderer cubeImage))
             {
                 image.sprite = cubeImage.sprite;
                 image.enabled = true;
@@ -60,5 +69,14 @@ public class Goals : MonoBehaviour
                 }
             }
         }
+    }
+
+    private int GetExcludedRandomValue()
+    {
+        var NextRandom = Random.Range(0, 5);
+        if (NextRandom == random)
+            GetExcludedRandomValue();
+        
+        return random;
     }
 }

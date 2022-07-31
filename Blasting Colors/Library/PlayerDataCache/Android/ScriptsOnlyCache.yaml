@@ -89,51 +89,51 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1576}
+      Script: {instanceID: 1564}
     - Class: 114
-      Script: {instanceID: 1908}
+      Script: {instanceID: 1896}
     - Class: 114
-      Script: {instanceID: 2030}
+      Script: {instanceID: 2018}
     - Class: 114
-      Script: {instanceID: 2324}
+      Script: {instanceID: 2312}
     - Class: 114
-      Script: {instanceID: 2772}
+      Script: {instanceID: 2760}
     - Class: 114
-      Script: {instanceID: 2944}
+      Script: {instanceID: 2932}
     - Class: 114
-      Script: {instanceID: 2986}
+      Script: {instanceID: 2974}
     - Class: 114
-      Script: {instanceID: 2996}
+      Script: {instanceID: 2984}
     - Class: 114
-      Script: {instanceID: 3186}
+      Script: {instanceID: 3174}
     - Class: 114
-      Script: {instanceID: 3440}
+      Script: {instanceID: 3428}
     - Class: 114
-      Script: {instanceID: 3522}
+      Script: {instanceID: 3510}
     - Class: 114
-      Script: {instanceID: 3564}
+      Script: {instanceID: 3552}
     - Class: 114
-      Script: {instanceID: 3678}
+      Script: {instanceID: 3666}
     - Class: 114
-      Script: {instanceID: 3800}
+      Script: {instanceID: 3788}
     - Class: 114
-      Script: {instanceID: 3918}
+      Script: {instanceID: 3906}
     - Class: 114
-      Script: {instanceID: 4058}
+      Script: {instanceID: 4046}
     - Class: 114
-      Script: {instanceID: 4448}
+      Script: {instanceID: 4436}
     - Class: 114
-      Script: {instanceID: 5026}
+      Script: {instanceID: 5014}
     - Class: 114
-      Script: {instanceID: 5354}
+      Script: {instanceID: 5342}
     - Class: 114
-      Script: {instanceID: 5420}
+      Script: {instanceID: 5408}
     - Class: 114
-      Script: {instanceID: 5442}
+      Script: {instanceID: 5430}
     - Class: 114
-      Script: {instanceID: 5658}
+      Script: {instanceID: 5646}
     - Class: 114
-      Script: {instanceID: 5954}
+      Script: {instanceID: 5942}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -141,6 +141,10 @@ ScriptsOnlyBuild:
     - Class: 157
       Script: {instanceID: 0}
     - Class: 196
+      Script: {instanceID: 0}
+    - Class: 198
+      Script: {instanceID: 0}
+    - Class: 199
       Script: {instanceID: 0}
     - Class: 212
       Script: {instanceID: 0}
@@ -703,7 +707,7 @@ ScriptsOnlyBuild:
     className: TMP_SubMeshUI
   - hash:
       serializedVersion: 2
-      Hash: 65c47904a1d1484a460ed9186af46b78
+      Hash: fbb2494ffdc5490ff5dcfd67265bdcef
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Cube

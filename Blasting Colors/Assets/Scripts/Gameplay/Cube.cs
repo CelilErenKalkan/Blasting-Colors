@@ -57,7 +57,6 @@ public class Cube : MonoBehaviour
             if (isDuck || isBalloon || transform.parent.childCount <= 1)
             {
                 if (TryGetComponent(out Animator animator)) animator.SetTrigger("isWrong");
-                GameManager.Instance.isPlayable = true;
             }
             else
                 StartCoroutine(GameManager.Instance.DestroyCubes(group));
@@ -89,9 +88,15 @@ public class Cube : MonoBehaviour
 
     public void DestroyThisCube()
     {
-        if (isDuck || isBalloon)
+        if (isDuck)
         {
             StartCoroutine(GameManager.Instance.DestroyCubes(group));
+        }
+        else if (isBalloon)
+        {
+            Pool.Instance.SpawnObject(transform.position, "BalloonParticle", null, 1f);
+            GameManager.Instance.allCubes[column, row] = null;
+            BalloonDestroyed?.Invoke();
         }
         else
         {

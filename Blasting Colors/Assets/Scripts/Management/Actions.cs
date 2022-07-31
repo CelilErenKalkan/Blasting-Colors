@@ -8,6 +8,7 @@ public static class Actions
     public static Action TurnEnded;
     public static Action CubeDestroyed;
     public static Action DuckDestroyed;
+    public static Action BalloonDestroyed;
     public static Action ButtonTapped;
     public static Action GoalAmountChanged;
 }

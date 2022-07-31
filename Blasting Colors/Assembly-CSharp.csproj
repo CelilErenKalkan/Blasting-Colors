@@ -78,6 +78,7 @@
      <Compile Include="Assets\Scripts\Management\CanvasHelper.cs" />
      <Compile Include="Assets\Scripts\Screen Adjustment\CameraViewportHandler.cs" />
      <Compile Include="Assets\Scripts\Management\SoundManager.cs" />
+     <Compile Include="Assets\Scripts\BalloonAudioSource.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />

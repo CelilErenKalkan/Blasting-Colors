@@ -44,10 +44,4 @@ public class SoundManager : MonoBehaviour
         audioSource.clip = sounds[2];
         audioSource.Play();
     }
-
-    private void OnBalloonPopped()
-    {
-        audioSource.clip = sounds[2];
-        audioSource.Play();
-    }
 }

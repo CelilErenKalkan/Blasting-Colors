@@ -12,7 +12,11 @@ public class GameManager : MonoSingleton<GameManager>
     [HideInInspector]public float offset;
     [HideInInspector]public bool isPlayable;
     [HideInInspector]public List<GameObject> goalList = new List<GameObject>();
-    
+
+    public int duckAmount;
+    public int balloonAmount;
+    private int currentDuckAmount;
+    private int currentBalloonAmount;
     public int moves = 30;
     public List<int> goalAmounts;
     private GameObject groups;
@@ -66,17 +70,35 @@ public class GameManager : MonoSingleton<GameManager>
     private IEnumerator SetUp(float timeIndex)
     {
         isPlayable = true;
-        for (int i = 0; i < width; i++)
+
+        for (var i = 0; i < width; i++)
         {
-            for (int j = 0; j < height; j++)
+            for (var j = 0; j < height; j++)
             {
                 if (allCubes[i, j] == null)
                 {
                     var temPos = matrixTransforms[i, j];
                     temPos.y += offset * j * 0.5f;
                     var cubeToUse = Random.Range(0, cubes.Length);
-                    if (j == 0 && cubeToUse == 5)
-                        cubeToUse = Random.Range(0, 5);
+                    
+                    if (cubeToUse == 5)
+                    {
+                        if (j == 0 || currentDuckAmount >= duckAmount)
+                            cubeToUse = Random.Range(0, 5);
+                        else
+                        {
+                            currentDuckAmount++;
+                        }
+                    }
+                    else if (cubeToUse == 6)
+                    {
+                        if (currentBalloonAmount >= balloonAmount)
+                            cubeToUse = Random.Range(0, 5);
+                        else
+                        {
+                            currentBalloonAmount++;
+                        }
+                    }
 
                     var cube = Instantiate(cubes[cubeToUse], temPos, Quaternion.identity);
                     allCubes[i, j] = cube;
@@ -90,7 +112,7 @@ public class GameManager : MonoSingleton<GameManager>
                 }
             }
         }
-
+        
         Grouping();
     }
     
@@ -187,24 +209,35 @@ public class GameManager : MonoSingleton<GameManager>
         CheckShuffling();
     }
 
-    public void DestroyCubesAt(int column, int row) // Destroys the selected dot.
+    public void DestroyCubesAt(int column, int row) // Destroys the selected cube.
     {
+        if (allCubes[column, row].TryGetComponent(out Cube cube))
+        {
+            if (cube.isBalloon)
+            {
+                Pool.Instance.SpawnObject(cube.transform.position, "BalloonParticle", null, 1f);
+                currentBalloonAmount--;
+                BalloonDestroyed?.Invoke();
+            }
+        }
+        
         Destroy(allCubes[column, row]);
         allCubes[column, row] = null;
     }
 
-    public IEnumerator DestroyCubes(GameObject group) // Destroy all the dots in the selected dot.
+    public IEnumerator DestroyCubes(GameObject group) // Destroy all the dots in the selected cube.
     {
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
-                if (allCubes[i, j].TryGetComponent(out Cube cube))
+                if (allCubes[i, j] != null && allCubes[i, j].TryGetComponent(out Cube cube))
                 {
                     if (allCubes[i, j] != null && cube.transform.parent == group.transform)
                     {
                         if (allCubes[i, j].CompareTag(goalList[0].tag) && goalAmounts[0] > 0)
                         {
+                            CheckForBalloon(i, j);
                             cube.JumpToGoal(0);
                             allCubes[i, j] = null;
 
@@ -212,6 +245,7 @@ public class GameManager : MonoSingleton<GameManager>
                         }
                         else if (allCubes[i, j].CompareTag(goalList[1].tag) && goalAmounts[1] > 0)
                         {
+                            CheckForBalloon(i, j);
                             cube.JumpToGoal(1);
                             allCubes[i, j] = null;
                             
@@ -219,6 +253,7 @@ public class GameManager : MonoSingleton<GameManager>
                         }
                         else if (cube.isDuck)
                         {
+                            currentDuckAmount--;
                             DuckDestroyed?.Invoke();
                             Pool.Instance.SpawnObject(cube.transform.position, "BalloonParticle", null, 1f);
                             DestroyCubesAt(i, j);
@@ -227,6 +262,7 @@ public class GameManager : MonoSingleton<GameManager>
                         {
                             CubeDestroyed?.Invoke();
                             Pool.Instance.SpawnObject(cube.transform.position, "CubeParticle", null, 0.5f);
+                            CheckForBalloon(i, j);
                             DestroyCubesAt(i, j);
                         }
                     }
@@ -238,7 +274,42 @@ public class GameManager : MonoSingleton<GameManager>
         DecreaseRow();
     }
 
-    public void DecreaseRow() // Fills the empty places.
+    private void CheckForBalloon(int column, int row)
+    {
+        if (column + 1 < width && allCubes[column + 1, row] != null && allCubes[column + 1, row].TryGetComponent(out Cube rightCube))
+        {
+            if (rightCube.isBalloon)
+            {
+                DestroyCubesAt(column + 1, row);
+            }
+        }
+        
+        if (column - 1 >= 0 && allCubes[column - 1, row] != null && allCubes[column - 1, row].TryGetComponent(out Cube leftCube))
+        {
+            if (leftCube.isBalloon)
+            {
+                DestroyCubesAt(column - 1, row);
+            }
+        }
+        
+        if (row + 1 < height && allCubes[column, row + 1] != null && allCubes[column, row + 1].TryGetComponent(out Cube upperCube))
+        {
+            if (upperCube.isBalloon)
+            {
+                DestroyCubesAt(column, row + 1);
+            }
+        }
+        
+        if (row - 1 >= 0 && allCubes[column, row - 1] != null && allCubes[column, row - 1].TryGetComponent(out Cube downCube))
+        {
+            if (downCube.isBalloon)
+            {
+                DestroyCubesAt(column, row - 1);
+            }
+        }
+    }
+
+    private void DecreaseRow() // Fills the empty places.
     {
         var nullCount = 0;
         for (var i = 0; i < width; i++)
