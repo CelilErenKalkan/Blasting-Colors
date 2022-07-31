@@ -72,7 +72,7 @@
      <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleSprite.cs" />
      <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUtils.cs" />
      <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUI.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Dot.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Cube.cs" />
      <Compile Include="Assets\Scripts\Management\UIManager.cs" />
      <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleAudio.cs" />
      <Compile Include="Assets\Scripts\Management\CanvasHelper.cs" />

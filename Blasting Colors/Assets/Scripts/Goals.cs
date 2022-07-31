@@ -30,17 +30,17 @@ public class Goals : MonoBehaviour
     {
         for (var i = 0; i < 2; i++)
         {
-            var random = Random.Range(0, GameManager.Instance.dots.Length);
+            var random = Random.Range(0, GameManager.Instance.cubes.Length);
             var goalName = "Goal" + i;
-            var goalDotNo = PlayerPrefs.GetInt(goalName, random);
+            var goalCubeNo = PlayerPrefs.GetInt(goalName, random);
             
             GameManager.Instance.goalList.Add(transform.GetChild(i).gameObject);
-            transform.GetChild(i).tag = GameManager.Instance.dots[goalDotNo].tag;
+            transform.GetChild(i).tag = GameManager.Instance.cubes[goalCubeNo].tag;
             
             if (transform.GetChild(i).TryGetComponent(out Image image) &&
-                GameManager.Instance.dots[goalDotNo].TryGetComponent(out SpriteRenderer dotImage))
-                image.sprite = dotImage.sprite;
-            PlayerPrefs.SetInt(goalName, goalDotNo);
+                GameManager.Instance.cubes[goalCubeNo].TryGetComponent(out SpriteRenderer cubeImage))
+                image.sprite = cubeImage.sprite;
+            PlayerPrefs.SetInt(goalName, goalCubeNo);
         }
     }
 

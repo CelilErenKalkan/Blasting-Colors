@@ -3,7 +3,7 @@ using DG.Tweening;
 using UnityEngine;
 using static Actions;
 
-public class Dot : MonoBehaviour
+public class Cube : MonoBehaviour
 {
     [HideInInspector]public int column;
     [HideInInspector]public int row;
@@ -34,14 +34,14 @@ public class Dot : MonoBehaviour
     {
         if (isDestroyed) return;
         tempPos = GameManager.Instance.matrixTransforms[column, row];
-        transform.DOMove(tempPos, 0.5f).SetEase(Ease.OutBounce).OnComplete(SetDot);
+        transform.DOMove(tempPos, 0.5f).SetEase(Ease.OutBounce).OnComplete(SetCube);
         if (TryGetComponent(out SpriteRenderer renderer)) renderer.sortingOrder = row;
     }
 
-    private void SetDot()
+    private void SetCube()
     {
         transform.position = tempPos;
-        GameManager.Instance.allDots[column, row] = gameObject;
+        GameManager.Instance.allCubes[column, row] = gameObject;
     }
 
     private void OnMouseUp()
@@ -51,8 +51,8 @@ public class Dot : MonoBehaviour
             GameManager.Instance.isPlayable = false;
             if (transform.parent.childCount > 1)
             {
-                StartCoroutine(GameManager.Instance.DestroyDots(group));
-                DotDestroyed?.Invoke();
+                StartCoroutine(GameManager.Instance.DestroyCubes(group));
+                CubeDestroyed?.Invoke();
             }
             else
             {
@@ -81,10 +81,10 @@ public class Dot : MonoBehaviour
         isDestroyed = true;
 
         var goalPosition = GameManager.Instance.goalList[goalNo].transform.position;
-        transform.DOJump(goalPosition, -5, 1, 1).OnComplete(DestroyThisDot);
+        transform.DOJump(goalPosition, -5, 1, 1).OnComplete(DestroyThisCube);
     }
 
-    public void DestroyThisDot()
+    public void DestroyThisCube()
     {
         GameManager.Instance.goalAmounts[goalNo]--;
         GoalAmountChanged?.Invoke();

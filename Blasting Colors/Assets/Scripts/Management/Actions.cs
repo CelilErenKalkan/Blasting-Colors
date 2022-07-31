@@ -6,7 +6,7 @@ public static class Actions
     public static Action LevelSuccess;
     public static Action LevelFailed;
     public static Action TurnEnded;
-    public static Action DotDestroyed;
+    public static Action CubeDestroyed;
     public static Action ButtonTapped;
     public static Action GoalAmountChanged;
 }

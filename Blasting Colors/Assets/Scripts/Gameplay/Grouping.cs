@@ -32,6 +32,6 @@ public class Grouping : MonoBehaviour
     private void DeleteGroup(GameObject member, GameObject otherGroup)
     {
         member.transform.parent = otherGroup.transform;
-        if (member.TryGetComponent(out Dot dot)) dot.group = otherGroup;
+        if (member.TryGetComponent(out Cube cube)) cube.group = otherGroup;
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine;
 using static Actions;
 using Random = UnityEngine.Random;
@@ -15,19 +14,11 @@ public class GameManager : MonoSingleton<GameManager>
     [HideInInspector]public List<GameObject> goalList = new List<GameObject>();
     
     public int moves = 30;
-    public int destroyedDots;
     public List<int> goalAmounts;
     private GameObject groups;
-    public GameObject[,] allDots;
+    public GameObject[,] allCubes;
     public Vector2[,] matrixTransforms;
-    public GameObject[] dots;
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public GameObject[] cubes;
 
     private void OnEnable()
     {
@@ -46,7 +37,7 @@ public class GameManager : MonoSingleton<GameManager>
     private void OnGameStarted()
     {
         moves = 30;
-        allDots = new GameObject[width, height];
+        allCubes = new GameObject[width, height];
         InitialSetUp();
     }
 
@@ -78,18 +69,18 @@ public class GameManager : MonoSingleton<GameManager>
         {
             for (int j = 0; j < height; j++)
             {
-                if (allDots[i, j] == null)
+                if (allCubes[i, j] == null)
                 {
                     Vector2 temPos = matrixTransforms[i, j];
                     temPos.y += offset * j * 0.5f;
-                    int dotToUse = Random.Range(0, dots.Length);
+                    int cubeToUse = Random.Range(0, cubes.Length);
 
-                    GameObject dot = Instantiate(dots[dotToUse], temPos, Quaternion.identity);
-                    allDots[i, j] = dot;
-                    if (dot.TryGetComponent(out Dot dotScript))
+                    GameObject cube = Instantiate(cubes[cubeToUse], temPos, Quaternion.identity);
+                    allCubes[i, j] = cube;
+                    if (cube.TryGetComponent(out Cube cubeScript))
                     {
-                        dotScript.column = i;
-                        dotScript.row = j;
+                        cubeScript.column = i;
+                        cubeScript.row = j;
                     }
                 }
             }
@@ -106,18 +97,18 @@ public class GameManager : MonoSingleton<GameManager>
         {
             for (int j = 0; j < height; j++)
             {
-                if (allDots[i, j] == null)
+                if (allCubes[i, j] == null)
                 {
                     Vector2 temPos = matrixTransforms[i, j];
                     temPos.y += offset * j * 0.5f;
-                    int dotToUse = Random.Range(0, dots.Length);
+                    int cubeToUse = Random.Range(0, cubes.Length);
 
-                    GameObject dot = Instantiate(dots[dotToUse], temPos, Quaternion.identity);
-                    allDots[i, j] = dot;
-                    if (dot.TryGetComponent(out Dot dotScript))
+                    GameObject cube = Instantiate(cubes[cubeToUse], temPos, Quaternion.identity);
+                    allCubes[i, j] = cube;
+                    if (cube.TryGetComponent(out Cube cubeScript))
                     {
-                        dotScript.column = i;
-                        dotScript.row = j;
+                        cubeScript.column = i;
+                        cubeScript.row = j;
                     }
 
                     yield return new WaitForSeconds(0.05f);
@@ -139,8 +130,8 @@ public class GameManager : MonoSingleton<GameManager>
             {
                 for (int j = 0; j < height; j++)
                 {
-                    var dot = allDots[i, j];
-                    allDots[i, j] = null;
+                    var dot = allCubes[i, j];
+                    allCubes[i, j] = null;
                     Destroy(dot);
                 }
             }
@@ -155,7 +146,7 @@ public class GameManager : MonoSingleton<GameManager>
         {
             for (int j = 0; j < height; j++)
             {
-                if (allDots[i, j] != null)
+                if (allCubes[i, j] != null)
                 {
                     RemoveGroups(i, j);
                 }
@@ -167,16 +158,16 @@ public class GameManager : MonoSingleton<GameManager>
 
     private void RemoveGroups(int column, int row)
     {
-        allDots[column, row].transform.parent = null;
-        if (allDots[column, row].TryGetComponent(out Dot dot))
+        allCubes[column, row].transform.parent = null;
+        if (allCubes[column, row].TryGetComponent(out Cube cube))
         {
-            if (dot.group != null)
+            if (cube.group != null)
             {
-                dot.group.SetActive(false);
-                dot.group = null;
+                cube.group.SetActive(false);
+                cube.group = null;
             }
 
-            dot.CreateGroup();
+            cube.CreateGroup();
         }
     }
 
@@ -189,12 +180,12 @@ public class GameManager : MonoSingleton<GameManager>
                 //Checking Left.
                 if (i > 0)
                 {
-                    if (allDots[i - 1, j] != null && allDots[i, j] != null)
+                    if (allCubes[i - 1, j] != null && allCubes[i, j] != null)
                     {
-                        if (allDots[i - 1, j].CompareTag(allDots[i, j].tag))
+                        if (allCubes[i - 1, j].CompareTag(allCubes[i, j].tag))
                         {
-                            if (allDots[i - 1, j].transform.parent.TryGetComponent<Grouping>(out var grouping))
-                                grouping.ChangeGroup(allDots[i, j].transform.parent.gameObject);
+                            if (allCubes[i - 1, j].transform.parent.TryGetComponent<Grouping>(out var grouping))
+                                grouping.ChangeGroup(allCubes[i, j].transform.parent.gameObject);
                         }
                     }
                 }
@@ -202,12 +193,12 @@ public class GameManager : MonoSingleton<GameManager>
                 //Checking Down.
                 if (j > 0)
                 {
-                    if (allDots[i, j - 1] != null && allDots[i, j] != null)
+                    if (allCubes[i, j - 1] != null && allCubes[i, j] != null)
                     {
-                        if (allDots[i, j - 1].tag == allDots[i, j].tag)
+                        if (allCubes[i, j - 1].CompareTag(allCubes[i, j].tag))
                         {
-                            if (allDots[i, j - 1].transform.parent.TryGetComponent<Grouping>(out var grouping))
-                                grouping.ChangeGroup(allDots[i, j].transform.parent.gameObject);
+                            if (allCubes[i, j - 1].transform.parent.TryGetComponent<Grouping>(out var grouping))
+                                grouping.ChangeGroup(allCubes[i, j].transform.parent.gameObject);
                         }
                     }
                 }
@@ -217,42 +208,42 @@ public class GameManager : MonoSingleton<GameManager>
         CheckShuffling();
     }
 
-    public void DestroyDotsAt(int column, int row) // Destroys the selected dot.
+    public void DestroyCubesAt(int column, int row) // Destroys the selected dot.
     {
-        Destroy(allDots[column, row]);
-        allDots[column, row] = null;
+        Destroy(allCubes[column, row]);
+        allCubes[column, row] = null;
     }
 
-    public IEnumerator DestroyDots(GameObject group) // Destroy all the dots in the selected dot.
+    public IEnumerator DestroyCubes(GameObject group) // Destroy all the dots in the selected dot.
     {
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
-                if (allDots[i, j] != null && allDots[i, j].transform.parent == group.transform)
+                if (allCubes[i, j] != null && allCubes[i, j].transform.parent == group.transform)
                 {
-                    if (allDots[i, j].CompareTag(goalList[0].tag))
+                    if (allCubes[i, j].CompareTag(goalList[0].tag))
                     {
-                        if (allDots[i, j].TryGetComponent(out Dot dot))
+                        if (allCubes[i, j].TryGetComponent(out Cube cube))
                         {
-                            dot.JumpToGoal(0);
-                            allDots[i, j] = null;
+                            cube.JumpToGoal(0);
+                            allCubes[i, j] = null;
                         }
 
                         yield return new WaitForSeconds(0.05f);
                     }
-                    else if (allDots[i, j].CompareTag(goalList[1].tag))
+                    else if (allCubes[i, j].CompareTag(goalList[1].tag))
                     {
-                        if (allDots[i, j].TryGetComponent(out Dot dot))
+                        if (allCubes[i, j].TryGetComponent(out Cube cube))
                         {
-                            dot.JumpToGoal(1);
-                            allDots[i, j] = null;
+                            cube.JumpToGoal(1);
+                            allCubes[i, j] = null;
                         }
                         
                         yield return new WaitForSeconds(0.05f);
                     }
                     else
-                        DestroyDotsAt(i, j);
+                        DestroyCubesAt(i, j);
                 }
             }
         }
@@ -268,17 +259,17 @@ public class GameManager : MonoSingleton<GameManager>
         {
             for (var j = 0; j < height; j++)
             {
-                if (allDots[i, j] == null)
+                if (allCubes[i, j] == null)
                 {
                     nullCount++;
                 }
                 else if (nullCount > 0)
                 {
-                    if (allDots[i, j].TryGetComponent(out Dot dot))
+                    if (allCubes[i, j].TryGetComponent(out Cube cube))
                     {
-                        dot.row -= nullCount;
-                        allDots[i, dot.row] = allDots[i, j];
-                        allDots[i, j] = null;
+                        cube.row -= nullCount;
+                        allCubes[i, cube.row] = allCubes[i, j];
+                        allCubes[i, j] = null;
                     }
                 }
             }
@@ -297,7 +288,7 @@ public class GameManager : MonoSingleton<GameManager>
         {
             for (int j = 0; j < height; j++)
             {
-                if (allDots[i, j].transform.parent.childCount > 1)
+                if (allCubes[i, j].transform.parent.childCount > 1)
                     count++;
             }
         }
