@@ -15,6 +15,7 @@ public class GameManager : MonoSingleton<GameManager>
     [HideInInspector]public List<GameObject> goalList = new List<GameObject>();
     
     public int moves = 30;
+    public int destroyedDots;
     public List<int> goalAmounts;
     private GameObject groups;
     public GameObject[,] allDots;
@@ -30,14 +31,14 @@ public class GameManager : MonoSingleton<GameManager>
 
     private void OnEnable()
     {
-        DotDestroyed += CheckIsGameFinished;
+        TurnEnded += CheckIsGameFinished;
         GoalAmountChanged += CheckIsGameFinished;
         LevelStart += OnGameStarted;
     }
     
     private void OnDisable()
     {
-        DotDestroyed -= CheckIsGameFinished;
+        TurnEnded -= CheckIsGameFinished;
         GoalAmountChanged -= CheckIsGameFinished;
         LevelStart -= OnGameStarted;
     }
@@ -285,7 +286,7 @@ public class GameManager : MonoSingleton<GameManager>
             nullCount = 0;
         }
 
-        DotDestroyed?.Invoke();
+        TurnEnded?.Invoke();
         StartCoroutine(SetUp());
     }
 

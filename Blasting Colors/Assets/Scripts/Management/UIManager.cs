@@ -17,14 +17,14 @@ public class UIManager : MonoBehaviour
     {
         LevelFailed += OnLevelFailed;
         LevelSuccess += OnLevelSuccess;
-        DotDestroyed += OnDotDestroyed;
+        TurnEnded += OnTurnEnded;
     }
     
     private void OnDisable()
     {
         LevelFailed -= OnLevelFailed;
         LevelSuccess -= OnLevelSuccess;
-        DotDestroyed -= OnDotDestroyed;
+        TurnEnded -= OnTurnEnded;
     }
 
     public void GameStartButton()
@@ -52,7 +52,7 @@ public class UIManager : MonoBehaviour
         SceneManager.LoadScene(sceneBuildIndex: 0);
     }
 
-    private void OnDotDestroyed()
+    private void OnTurnEnded()
     {
         GameManager.Instance.moves--;
         canvasHelper.SetMovesText();

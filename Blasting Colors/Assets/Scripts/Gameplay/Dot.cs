@@ -17,20 +17,20 @@ public class Dot : MonoBehaviour
 
     private void Start()
     {
-        OnDotDestroyed();
+        OnTurnEnded();
     }
 
     private void OnEnable()
     {
-        DotDestroyed += OnDotDestroyed;
+        TurnEnded += OnTurnEnded;
     }
     
     private void OnDisable()
     {
-        DotDestroyed -= OnDotDestroyed;
+        TurnEnded -= OnTurnEnded;
     }
 
-    private void OnDotDestroyed()
+    private void OnTurnEnded()
     {
         if (isDestroyed) return;
         tempPos = GameManager.Instance.matrixTransforms[column, row];
@@ -52,6 +52,7 @@ public class Dot : MonoBehaviour
             if (transform.parent.childCount > 1)
             {
                 StartCoroutine(GameManager.Instance.DestroyDots(group));
+                DotDestroyed?.Invoke();
             }
             else
             {
