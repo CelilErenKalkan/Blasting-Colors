@@ -16,12 +16,14 @@ public class SoundManager : MonoBehaviour
     private void OnEnable()
     {
         CubeDestroyed += OnCubeDestroyed;
+        DuckDestroyed += OnDuckDestroyed;
         GoalAmountChanged += OnGoalAmountChanged;
     }
     
     private void OnDisable()
     {
         CubeDestroyed -= OnCubeDestroyed;
+        DuckDestroyed -= OnDuckDestroyed;
         GoalAmountChanged -= OnGoalAmountChanged;
     }
     
@@ -34,6 +36,12 @@ public class SoundManager : MonoBehaviour
     private void OnCubeDestroyed()
     {
         audioSource.clip = sounds[1];
+        audioSource.Play();
+    }
+    
+    private void OnDuckDestroyed()
+    {
+        audioSource.clip = sounds[2];
         audioSource.Play();
     }
 

@@ -38,7 +38,6 @@ public class GameManager : MonoSingleton<GameManager>
     {
         moves = 30;
         allCubes = new GameObject[width, height];
-        //InitialSetUp();
         StartCoroutine(SetUp(1));
     }
 
@@ -52,31 +51,34 @@ public class GameManager : MonoSingleton<GameManager>
         
         if (isgoalAmountFinished)
         {
-            isPlayable = false;
             LevelSuccess?.Invoke();
         }
         else if (moves <= 0)
         {
-            isPlayable = false;
             LevelFailed?.Invoke();
         }
+        else
+            StartCoroutine(SetUp(10));
     }
 
     #region GameplayMechanic
 
     private IEnumerator SetUp(float timeIndex)
     {
+        isPlayable = true;
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
                 if (allCubes[i, j] == null)
                 {
-                    Vector2 temPos = matrixTransforms[i, j];
+                    var temPos = matrixTransforms[i, j];
                     temPos.y += offset * j * 0.5f;
-                    int cubeToUse = Random.Range(0, cubes.Length);
+                    var cubeToUse = Random.Range(0, cubes.Length);
+                    if (j == 0 && cubeToUse == 5)
+                        cubeToUse = Random.Range(0, 5);
 
-                    GameObject cube = Instantiate(cubes[cubeToUse], temPos, Quaternion.identity);
+                    var cube = Instantiate(cubes[cubeToUse], temPos, Quaternion.identity);
                     allCubes[i, j] = cube;
                     if (cube.TryGetComponent(out Cube cubeScript))
                     {
@@ -90,8 +92,6 @@ public class GameManager : MonoSingleton<GameManager>
         }
 
         Grouping();
-
-        isPlayable = true;
     }
     
     private void CheckShuffling() // Shuffles if all the dots are different from each other.
@@ -109,7 +109,7 @@ public class GameManager : MonoSingleton<GameManager>
                 }
             }
 
-            StartCoroutine(SetUp(10));
+            TurnEnded?.Invoke();
         }
     }
 
@@ -150,28 +150,34 @@ public class GameManager : MonoSingleton<GameManager>
         {
             for (int j = 0; j < height; j++)
             {
-                //Checking Left.
-                if (i > 0)
+                if (allCubes[i, j].TryGetComponent(out Cube cube))
                 {
-                    if (allCubes[i - 1, j] != null && allCubes[i, j] != null)
+                    if (!cube.isBalloon && !cube.isDuck)
                     {
-                        if (allCubes[i - 1, j].CompareTag(allCubes[i, j].tag))
+                        //Checking Left.
+                        if (i > 0)
                         {
-                            if (allCubes[i - 1, j].transform.parent.TryGetComponent<Grouping>(out var grouping))
-                                grouping.ChangeGroup(allCubes[i, j].transform.parent.gameObject);
+                            if (allCubes[i - 1, j] != null && allCubes[i, j] != null)
+                            {
+                                if (allCubes[i - 1, j].CompareTag(allCubes[i, j].tag))
+                                {
+                                    if (allCubes[i - 1, j].transform.parent.TryGetComponent<Grouping>(out var grouping))
+                                        grouping.ChangeGroup(allCubes[i, j].transform.parent.gameObject);
+                                }
+                            }
                         }
-                    }
-                }
 
-                //Checking Down.
-                if (j > 0)
-                {
-                    if (allCubes[i, j - 1] != null && allCubes[i, j] != null)
-                    {
-                        if (allCubes[i, j - 1].CompareTag(allCubes[i, j].tag))
+                        //Checking Down.
+                        if (j > 0)
                         {
-                            if (allCubes[i, j - 1].transform.parent.TryGetComponent<Grouping>(out var grouping))
-                                grouping.ChangeGroup(allCubes[i, j].transform.parent.gameObject);
+                            if (allCubes[i, j - 1] != null && allCubes[i, j] != null)
+                            {
+                                if (allCubes[i, j - 1].CompareTag(allCubes[i, j].tag))
+                                {
+                                    if (allCubes[i, j - 1].transform.parent.TryGetComponent<Grouping>(out var grouping))
+                                        grouping.ChangeGroup(allCubes[i, j].transform.parent.gameObject);
+                                }
+                            }
                         }
                     }
                 }
@@ -183,7 +189,6 @@ public class GameManager : MonoSingleton<GameManager>
 
     public void DestroyCubesAt(int column, int row) // Destroys the selected dot.
     {
-        Pool.Instance.SpawnObject(allCubes[column, row].transform.position, "CubeParticle", null, 2f);
         Destroy(allCubes[column, row]);
         allCubes[column, row] = null;
     }
@@ -194,30 +199,37 @@ public class GameManager : MonoSingleton<GameManager>
         {
             for (int j = 0; j < height; j++)
             {
-                if (allCubes[i, j] != null && allCubes[i, j].transform.parent == group.transform)
+                if (allCubes[i, j].TryGetComponent(out Cube cube))
                 {
-                    if (allCubes[i, j].CompareTag(goalList[0].tag))
+                    if (allCubes[i, j] != null && cube.transform.parent == group.transform)
                     {
-                        if (allCubes[i, j].TryGetComponent(out Cube cube))
+                        if (allCubes[i, j].CompareTag(goalList[0].tag) && goalAmounts[0] > 0)
                         {
                             cube.JumpToGoal(0);
                             allCubes[i, j] = null;
-                        }
 
-                        yield return new WaitForSeconds(0.05f);
-                    }
-                    else if (allCubes[i, j].CompareTag(goalList[1].tag))
-                    {
-                        if (allCubes[i, j].TryGetComponent(out Cube cube))
+                            yield return new WaitForSeconds(0.05f);
+                        }
+                        else if (allCubes[i, j].CompareTag(goalList[1].tag) && goalAmounts[1] > 0)
                         {
                             cube.JumpToGoal(1);
                             allCubes[i, j] = null;
+                            
+                            yield return new WaitForSeconds(0.05f);
                         }
-                        
-                        yield return new WaitForSeconds(0.05f);
+                        else if (cube.isDuck)
+                        {
+                            DuckDestroyed?.Invoke();
+                            Pool.Instance.SpawnObject(cube.transform.position, "BalloonParticle", null, 1f);
+                            DestroyCubesAt(i, j);
+                        }
+                        else
+                        {
+                            CubeDestroyed?.Invoke();
+                            Pool.Instance.SpawnObject(cube.transform.position, "CubeParticle", null, 2f);
+                            DestroyCubesAt(i, j);
+                        }
                     }
-                    else
-                        DestroyCubesAt(i, j);
                 }
             }
         }
@@ -226,7 +238,7 @@ public class GameManager : MonoSingleton<GameManager>
         DecreaseRow();
     }
 
-    private void DecreaseRow() // Fills the empty places.
+    public void DecreaseRow() // Fills the empty places.
     {
         var nullCount = 0;
         for (var i = 0; i < width; i++)
@@ -250,9 +262,8 @@ public class GameManager : MonoSingleton<GameManager>
 
             nullCount = 0;
         }
-
+        
         TurnEnded?.Invoke();
-        StartCoroutine(SetUp(10));
     }
 
     private bool ShouldShuffle() // Checking if shuffling necessary.

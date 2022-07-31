@@ -14,6 +14,8 @@ public class Cube : MonoBehaviour
 
 
     private bool isDestroyed;
+    public bool isBalloon;
+    public bool isDuck;
 
     private void Start()
     {
@@ -42,6 +44,9 @@ public class Cube : MonoBehaviour
     {
         transform.position = tempPos;
         GameManager.Instance.allCubes[column, row] = gameObject;
+        
+        if (isDuck && row == 0)
+            DestroyThisCube();
     }
 
     private void OnMouseUp()
@@ -49,16 +54,14 @@ public class Cube : MonoBehaviour
         if (GameManager.Instance.isPlayable)
         {
             GameManager.Instance.isPlayable = false;
-            if (transform.parent.childCount > 1)
-            {
-                StartCoroutine(GameManager.Instance.DestroyCubes(group));
-                CubeDestroyed?.Invoke();
-            }
-            else
+            if (isDuck || isBalloon || transform.parent.childCount <= 1)
             {
                 if (TryGetComponent(out Animator animator)) animator.SetTrigger("isWrong");
                 GameManager.Instance.isPlayable = true;
             }
+            else
+                StartCoroutine(GameManager.Instance.DestroyCubes(group));
+            
         }
     }
 
@@ -86,9 +89,17 @@ public class Cube : MonoBehaviour
 
     public void DestroyThisCube()
     {
-        Pool.Instance.SpawnObject(transform.position, "StarParticle", null, 2f);
-        GameManager.Instance.goalAmounts[goalNo]--;
-        GoalAmountChanged?.Invoke();
+        if (isDuck || isBalloon)
+        {
+            StartCoroutine(GameManager.Instance.DestroyCubes(group));
+        }
+        else
+        {
+            Pool.Instance.SpawnObject(transform.position, "StarParticle", null, 1f);
+            GameManager.Instance.goalAmounts[goalNo]--;
+            GoalAmountChanged?.Invoke();
+        }
+        
         Destroy(gameObject);
     }
 

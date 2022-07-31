@@ -54,7 +54,10 @@ public class Goals : MonoBehaviour
                 if (GameManager.Instance.goalAmounts[i] > 0)
                     text.text = GameManager.Instance.goalAmounts[i].ToString();
                 else
+                {
+                    transform.GetChild(i).GetChild(1).gameObject.SetActive(true);
                     text.text = " ";
+                }
             }
         }
     }

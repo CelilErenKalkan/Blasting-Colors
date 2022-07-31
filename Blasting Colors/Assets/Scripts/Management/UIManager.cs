@@ -10,7 +10,6 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         if (TryGetComponent<CanvasHelper>(out var helper)) canvasHelper = helper;
-        canvasHelper.SetMovesText();
     }
 
     private void OnEnable()
@@ -32,8 +31,7 @@ public class UIManager : MonoBehaviour
         LevelStart?.Invoke();
         ButtonTapped?.Invoke();
         canvasHelper.SetPanel(CanvasPanel.Start, false);
-        
-        GameManager.Instance.isPlayable = true;
+        canvasHelper.SetMovesText();
     }
 
     private void OnLevelSuccess()
