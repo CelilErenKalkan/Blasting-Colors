@@ -42,6 +42,7 @@ public class GameManager : MonoSingleton<GameManager>
     {
         moves = 30;
         allCubes = new GameObject[width, height];
+        isPlayable = true;
         StartCoroutine(SetUp(1));
     }
 
@@ -62,14 +63,15 @@ public class GameManager : MonoSingleton<GameManager>
             LevelFailed?.Invoke();
         }
         else
+        {
             StartCoroutine(SetUp(10));
+        }
     }
 
     #region GameplayMechanic
 
     private IEnumerator SetUp(float timeIndex)
     {
-        isPlayable = true;
 
         for (var i = 0; i < width; i++)
         {
@@ -334,6 +336,7 @@ public class GameManager : MonoSingleton<GameManager>
             nullCount = 0;
         }
         
+        isPlayable = true;
         TurnEnded?.Invoke();
     }
 

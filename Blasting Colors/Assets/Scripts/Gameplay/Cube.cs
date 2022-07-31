@@ -108,4 +108,9 @@ public class Cube : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public void SetIsPlayable()
+    {
+        GameManager.Instance.isPlayable = true;
+    }
+
 }

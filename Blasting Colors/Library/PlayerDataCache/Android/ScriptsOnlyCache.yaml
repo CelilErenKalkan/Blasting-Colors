@@ -2,6 +2,7 @@ ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
     - AnchorGameObject
+    - BalloonAudioSource
     - Board
     - CanvasHelper
     - Cube
@@ -42,8 +43,10 @@ ScriptsOnlyBuild:
     UnityEditor.Graphs.dll:
     - UnityEditor.Graphs.AnimationBlendTree.Graph
     - UnityEditor.Graphs.AnimationBlendTree.GraphGUI
+    - UnityEditor.Graphs.AnimationStateMachine.AnyStateNode
     - UnityEditor.Graphs.AnimationStateMachine.Graph
     - UnityEditor.Graphs.AnimationStateMachine.GraphGUI
+    - UnityEditor.Graphs.AnimationStateMachine.StateNode
     - UnityEditor.Graphs.AnimatorControllerTool
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
@@ -123,17 +126,19 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 4436}
     - Class: 114
-      Script: {instanceID: 5014}
+      Script: {instanceID: 4598}
     - Class: 114
-      Script: {instanceID: 5342}
+      Script: {instanceID: 5016}
     - Class: 114
-      Script: {instanceID: 5408}
+      Script: {instanceID: 5344}
     - Class: 114
-      Script: {instanceID: 5430}
+      Script: {instanceID: 5410}
     - Class: 114
-      Script: {instanceID: 5646}
+      Script: {instanceID: 5432}
     - Class: 114
-      Script: {instanceID: 5942}
+      Script: {instanceID: 5648}
+    - Class: 114
+      Script: {instanceID: 5944}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -239,7 +244,7 @@ ScriptsOnlyBuild:
     className: TMP_FontAsset
   - hash:
       serializedVersion: 2
-      Hash: 54314b556170f2dabb22a6acb31a4bcc
+      Hash: e24532148ef448f9704e77ef59e82832
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameManager
@@ -615,6 +620,12 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: ScaleToFitScreen
+  - hash:
+      serializedVersion: 2
+      Hash: 9b0482a6a54ae0b2a499b274113a6e58
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: BalloonAudioSource
   - hash:
       serializedVersion: 2
       Hash: aba7b2852ef61d175dd9602e7723d5e5
