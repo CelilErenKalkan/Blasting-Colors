@@ -36,6 +36,7 @@ public class UIManager : MonoBehaviour
 
     private void OnLevelSuccess()
     {
+        PlayerPrefs.DeleteAll();
         canvasHelper.SetPanel(CanvasPanel.Success, true);
     }
 
