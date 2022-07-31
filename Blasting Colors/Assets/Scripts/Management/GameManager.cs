@@ -226,7 +226,7 @@ public class GameManager : MonoSingleton<GameManager>
                         else
                         {
                             CubeDestroyed?.Invoke();
-                            Pool.Instance.SpawnObject(cube.transform.position, "CubeParticle", null, 2f);
+                            Pool.Instance.SpawnObject(cube.transform.position, "CubeParticle", null, 0.5f);
                             DestroyCubesAt(i, j);
                         }
                     }
