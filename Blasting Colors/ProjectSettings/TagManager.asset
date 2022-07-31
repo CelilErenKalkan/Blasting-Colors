@@ -11,6 +11,9 @@ TagManager:
   - Red
   - Yellow
   - Group
+  - StarParticle
+  - BalloonParticle
+  - CubeParticle
   layers:
   - Default
   - TransparentFX

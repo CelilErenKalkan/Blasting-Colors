@@ -86,6 +86,7 @@ public class Cube : MonoBehaviour
 
     public void DestroyThisCube()
     {
+        Pool.Instance.SpawnObject(transform.position, "StarParticle", null, 2f);
         GameManager.Instance.goalAmounts[goalNo]--;
         GoalAmountChanged?.Invoke();
         Destroy(gameObject);

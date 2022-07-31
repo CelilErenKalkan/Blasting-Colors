@@ -183,6 +183,7 @@ public class GameManager : MonoSingleton<GameManager>
 
     public void DestroyCubesAt(int column, int row) // Destroys the selected dot.
     {
+        Pool.Instance.SpawnObject(allCubes[column, row].transform.position, "CubeParticle", null, 2f);
         Destroy(allCubes[column, row]);
         allCubes[column, row] = null;
     }

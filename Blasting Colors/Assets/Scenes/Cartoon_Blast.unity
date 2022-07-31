@@ -961,6 +961,18 @@ MonoBehaviour:
     - {fileID: 7250489366450604670, guid: a2bcb30a29b34df4eada975fb30ae5ba, type: 3}
     amount: 48
     expandable: 1
+  - prefabs:
+    - {fileID: 123268, guid: 775fb3e8f5df827428272416a14d9adf, type: 3}
+    amount: 5
+    expandable: 1
+  - prefabs:
+    - {fileID: 153256, guid: fe394d041df1a0547990f49cf653249f, type: 3}
+    amount: 1
+    expandable: 1
+  - prefabs:
+    - {fileID: 193104, guid: c2f28a236b0696a4f90a994422019577, type: 3}
+    amount: 1
+    expandable: 1
   poolObjects: []
 --- !u!4 &935568470
 Transform:
