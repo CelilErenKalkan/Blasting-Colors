@@ -61,7 +61,17 @@ public class Cube : MonoBehaviour
             }
             else
             {
-                if (group.transform.childCount >= 5)
+                var isGoal = false;
+                foreach (var goal in _manager.goalList)
+                {
+                    if (transform.CompareTag(goal.tag))
+                    {
+                        isGoal = true;
+                        break;
+                    }
+                }
+                
+                if (group.transform.childCount >= 3 && !isGoal)
                     _manager.rocketCenter = transform;
                 
                 StartCoroutine(_manager.DestroyCubes(group));
@@ -100,7 +110,7 @@ public class Cube : MonoBehaviour
         isDestroyed = true;
 
         var targetPosition = _manager.rocketCenter.position;
-        transform.DOMove(targetPosition, 0.25f).OnComplete(DestroyThisCube);
+        transform.DOMove(targetPosition, 0.5f).SetEase(Ease.InBack).OnComplete(DestroyThisCube);
     }
 
     private void DestroyThisCube()
