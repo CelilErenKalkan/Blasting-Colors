@@ -237,7 +237,14 @@ public class GameManager : MonoSingleton<GameManager>
                 {
                     if (allCubes[i, j] != null && cube.transform.parent == group.transform)
                     {
-                        if (allCubes[i, j].CompareTag(goalList[0].tag) && goalAmounts[0] > 0)
+                        if (cube.isDuck)
+                        {
+                            currentDuckAmount--;
+                            DuckDestroyed?.Invoke();
+                            Pool.Instance.SpawnObject(cube.transform.position, "BalloonParticle", null, 1f);
+                            DestroyCubesAt(i, j);
+                        }
+                        else if (allCubes[i, j].CompareTag(goalList[0].tag) && goalAmounts[0] > 0)
                         {
                             CheckForBalloon(i, j);
                             cube.JumpToGoal(0);
@@ -252,13 +259,6 @@ public class GameManager : MonoSingleton<GameManager>
                             allCubes[i, j] = null;
                             
                             yield return new WaitForSeconds(0.05f);
-                        }
-                        else if (cube.isDuck)
-                        {
-                            currentDuckAmount--;
-                            DuckDestroyed?.Invoke();
-                            Pool.Instance.SpawnObject(cube.transform.position, "BalloonParticle", null, 1f);
-                            DestroyCubesAt(i, j);
                         }
                         else
                         {

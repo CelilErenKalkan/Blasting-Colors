@@ -10,26 +10,32 @@ using static Actions;
 public class Goals : MonoBehaviour
 {
     private int random;
+
+    private GameManager manager;
     
     private void OnEnable()
     {
         GoalAmountChanged += SetGoalTexts;
+        DuckDestroyed += CheckGoalForDuck;
+        BalloonDestroyed += CheckGoalForBalloon;
         LevelStart += SetGoals;
     }
     
     private void OnDisable()
     {
         GoalAmountChanged -= SetGoalTexts;
+        DuckDestroyed -= CheckGoalForDuck;
+        BalloonDestroyed -= CheckGoalForBalloon;
         LevelStart -= SetGoals;
     }
 
     private void SetGoals()
     {
-        var manager = GameManager.Instance;
+        manager = GameManager.Instance;
         
         for (var i = 0; i < 2; i++)
         {
-            random = Random.Range(0, 5);
+            random = Random.Range(0, manager.cubes.Length);
             var goalName = "Goal" + i;
             var goalCubeNo = PlayerPrefs.GetInt(goalName, random);
 
@@ -38,8 +44,8 @@ public class Goals : MonoBehaviour
                 random = GetExcludedRandomValue();
             }
             
-            manager.goalList.Add(transform.GetChild(i).gameObject);
             transform.GetChild(i).tag = manager.cubes[goalCubeNo].tag;
+            manager.goalList.Add(transform.GetChild(i).gameObject);
 
             if (transform.GetChild(i).TryGetComponent(out Image image) &&
                 manager.cubes[goalCubeNo].TryGetComponent(out SpriteRenderer cubeImage))
@@ -55,13 +61,13 @@ public class Goals : MonoBehaviour
 
     private void SetGoalTexts()
     {
-        var count = GameManager.Instance.goalAmounts.Count;
+        var count = manager.goalAmounts.Count;
         for (var i = 0; i < count; i++)
         {
             if (transform.GetChild(i).GetChild(0).TryGetComponent(out TMP_Text text))
             {
-                if (GameManager.Instance.goalAmounts[i] > 0)
-                    text.text = GameManager.Instance.goalAmounts[i].ToString();
+                if (manager.goalAmounts[i] > 0)
+                    text.text = manager.goalAmounts[i].ToString();
                 else
                 {
                     transform.GetChild(i).GetChild(1).gameObject.SetActive(true);
@@ -73,10 +79,42 @@ public class Goals : MonoBehaviour
 
     private int GetExcludedRandomValue()
     {
-        var NextRandom = Random.Range(0, 5);
-        if (NextRandom == random)
+        var nextRandom = Random.Range(0, manager.cubes.Length);
+        if (nextRandom == random)
             GetExcludedRandomValue();
         
         return random;
+    }
+
+    private void CheckGoalForDuck()
+    {
+        for (var i = 0; i < 2; i++)
+        {
+            if (transform.GetChild(i).CompareTag("Duck"))
+            {
+                manager.goalAmounts[i]--;
+                var goalName = "Goal" + i;
+                var goalCubeNo = PlayerPrefs.GetInt(goalName, random);
+                PlayerPrefs.SetInt(goalName, goalCubeNo);
+            }
+        }
+        
+        SetGoalTexts();
+    }
+    
+    private void CheckGoalForBalloon()
+    {
+        for (var i = 0; i < 2; i++)
+        {
+            if (transform.GetChild(i).CompareTag("Balloon"))
+            {
+                manager.goalAmounts[i]--;
+                var goalName = "Goal" + i;
+                var goalCubeNo = PlayerPrefs.GetInt(goalName, random);
+                PlayerPrefs.SetInt(goalName, goalCubeNo);
+            }
+        }
+        
+        SetGoalTexts();
     }
 }

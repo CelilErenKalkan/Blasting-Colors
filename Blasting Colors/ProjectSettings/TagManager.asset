@@ -15,6 +15,7 @@ TagManager:
   - BalloonParticle
   - CubeParticle
   - Duck
+  - Balloon
   layers:
   - Default
   - TransparentFX

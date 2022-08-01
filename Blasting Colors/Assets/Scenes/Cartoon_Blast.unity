@@ -1232,7 +1232,7 @@ MonoBehaviour:
   duckAmount: 3
   balloonAmount: 5
   moves: 30
-  goalAmounts: 1900000019000000
+  goalAmounts: 0f0000000f000000
   cubes:
   - {fileID: 7949424921106412337, guid: 4ab81c1103554f54cbeb48fc979ea151, type: 3}
   - {fileID: 7949424921106412337, guid: 1ca2ba077a419f04aa3a245024e6a64f, type: 3}
