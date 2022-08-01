@@ -81,26 +81,16 @@ public class GameManager : MonoSingleton<GameManager>
                 {
                     var temPos = matrixTransforms[i, j];
                     temPos.y += offset * j * 0.5f;
-                    var cubeToUse = Random.Range(0, cubes.Length);
+
+                    var cubeToUse = 0;
+                    var duckOrBalloonChance = Random.Range(0, 100);
                     
-                    if (cubeToUse == 5)
-                    {
-                        if (j == 0 || currentDuckAmount >= duckAmount)
-                            cubeToUse = Random.Range(0, 5);
-                        else
-                        {
-                            currentDuckAmount++;
-                        }
-                    }
-                    else if (cubeToUse == 6)
-                    {
-                        if (currentBalloonAmount >= balloonAmount)
-                            cubeToUse = Random.Range(0, 5);
-                        else
-                        {
-                            currentBalloonAmount++;
-                        }
-                    }
+                    if (duckOrBalloonChance <= 10 && j > 1) 
+                        cubeToUse = 5;
+                    else if (duckOrBalloonChance <= 30 && duckOrBalloonChance > 10)
+                        cubeToUse = 6;
+                    else
+                        cubeToUse = Random.Range(0, cubes.Length - 2);
 
                     var cube = Instantiate(cubes[cubeToUse], temPos, Quaternion.identity);
                     allCubes[i, j] = cube;
