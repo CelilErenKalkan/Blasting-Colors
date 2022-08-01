@@ -71,7 +71,7 @@ public class Cube : MonoBehaviour
                     }
                 }
                 
-                if (group.transform.childCount >= 3 && !isGoal)
+                if (group.transform.childCount >= 5 && !isGoal)
                     _manager.rocketCenter = transform;
                 
                 StartCoroutine(_manager.DestroyCubes(group));
