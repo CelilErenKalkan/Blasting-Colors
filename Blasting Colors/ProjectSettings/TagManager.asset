@@ -16,6 +16,12 @@ TagManager:
   - CubeParticle
   - Duck
   - Balloon
+  - DuckExplosion
+  - BlueRocks
+  - RedRocks
+  - GreenRocks
+  - PurpleRocks
+  - YellowRocks
   layers:
   - Default
   - TransparentFX

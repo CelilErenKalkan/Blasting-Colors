@@ -254,7 +254,8 @@ public class GameManager : MonoSingleton<GameManager>
                         else
                         {
                             CubeDestroyed?.Invoke();
-                            Pool.Instance.SpawnObject(cube.transform.position, "CubeParticle", null, 0.5f);
+                            var particleName = cube.tag + "Rocks";
+                            Pool.Instance.SpawnObject(cube.transform.position, particleName, null, 0.5f);
                             CheckForBalloon(i, j);
                             DestroyCubesAt(i, j);
                         }

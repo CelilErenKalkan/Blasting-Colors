@@ -1152,7 +1152,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 102.00003, y: -1256.9999}
+  m_AnchoredPosition: {x: 102, y: -1256.9999}
   m_SizeDelta: {x: -1658, y: 110.69995}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &743283100
@@ -1230,8 +1230,6 @@ MonoBehaviour:
   offset: 0
   isPlayable: 0
   goalList: []
-  duckAmount: 3
-  balloonAmount: 5
   moves: 30
   goalAmounts: 0f0000000f000000
   cubes:
@@ -1270,6 +1268,26 @@ MonoBehaviour:
   - prefabs:
     - {fileID: 193104, guid: c2f28a236b0696a4f90a994422019577, type: 3}
     amount: 1
+    expandable: 1
+  - prefabs:
+    - {fileID: 188560, guid: 7595617803d5fbc44b98bb8de242a6c1, type: 3}
+    amount: 5
+    expandable: 1
+  - prefabs:
+    - {fileID: 188560, guid: 9b2e2a514754a0d4c95f4b98441fef53, type: 3}
+    amount: 5
+    expandable: 1
+  - prefabs:
+    - {fileID: 188560, guid: f10cab52846d65c43a8eb73393402957, type: 3}
+    amount: 5
+    expandable: 1
+  - prefabs:
+    - {fileID: 188560, guid: fd9c4b8f5cd75e1438ac199c8bce3274, type: 3}
+    amount: 5
+    expandable: 1
+  - prefabs:
+    - {fileID: 188560, guid: 53dca11b00d9ced43b7dafbef02017f2, type: 3}
+    amount: 5
     expandable: 1
   poolObjects: []
 --- !u!4 &935568470
