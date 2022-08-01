@@ -12,11 +12,7 @@ public class GameManager : MonoSingleton<GameManager>
     [HideInInspector]public float offset;
     [HideInInspector]public bool isPlayable;
     [HideInInspector]public List<GameObject> goalList = new List<GameObject>();
-
-    public int duckAmount;
-    public int balloonAmount;
-    private int currentDuckAmount;
-    private int currentBalloonAmount;
+    
     public int moves = 30;
     public List<int> goalAmounts;
     private GameObject groups;
@@ -67,8 +63,9 @@ public class GameManager : MonoSingleton<GameManager>
             StartCoroutine(SetUp(10));
         }
     }
+    
 
-    #region GameplayMechanic
+    #region SetUp
 
     private IEnumerator SetUp(float timeIndex)
     {
@@ -104,6 +101,7 @@ public class GameManager : MonoSingleton<GameManager>
                 }
             }
         }
+        
         
         Grouping();
     }
@@ -199,7 +197,12 @@ public class GameManager : MonoSingleton<GameManager>
         }
 
         CheckShuffling();
+        isPlayable = true;
     }
+    
+    #endregion
+
+    #region Destroying Cubes
 
     public void DestroyCubesAt(int column, int row) // Destroys the selected cube.
     {
@@ -208,7 +211,6 @@ public class GameManager : MonoSingleton<GameManager>
             if (cube.isBalloon)
             {
                 Pool.Instance.SpawnObject(cube.transform.position, "BalloonParticle", null, 1f);
-                currentBalloonAmount--;
                 BalloonDestroyed?.Invoke();
             }
         }
@@ -229,7 +231,6 @@ public class GameManager : MonoSingleton<GameManager>
                     {
                         if (cube.isDuck)
                         {
-                            currentDuckAmount--;
                             DuckDestroyed?.Invoke();
                             Pool.Instance.SpawnObject(cube.transform.position, "BalloonParticle", null, 1f);
                             DestroyCubesAt(i, j);
@@ -326,7 +327,6 @@ public class GameManager : MonoSingleton<GameManager>
             nullCount = 0;
         }
         
-        isPlayable = true;
         TurnEnded?.Invoke();
     }
 
@@ -349,6 +349,6 @@ public class GameManager : MonoSingleton<GameManager>
     {
         deactive.gameObject.SetActive(false);
     }
-
+    
     #endregion
 }
