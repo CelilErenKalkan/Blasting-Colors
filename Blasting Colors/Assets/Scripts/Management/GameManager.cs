@@ -19,6 +19,7 @@ public class GameManager : MonoSingleton<GameManager>
     public GameObject[,] allCubes;
     public Vector2[,] matrixTransforms;
     public GameObject[] cubes;
+    public Transform rocketCenter;
 
     private void OnEnable()
     {
@@ -44,13 +45,13 @@ public class GameManager : MonoSingleton<GameManager>
 
     private void CheckIsGameFinished()
     {
-        var isgoalAmountFinished = true;
+        var isGoalAmountFinished = true;
         foreach (var goalAmount in goalAmounts)
         {
-            if (goalAmount > 0) isgoalAmountFinished = false;
+            if (goalAmount > 0) isGoalAmountFinished = false;
         }
         
-        if (isgoalAmountFinished)
+        if (isGoalAmountFinished)
         {
             LevelSuccess?.Invoke();
         }
@@ -204,7 +205,7 @@ public class GameManager : MonoSingleton<GameManager>
 
     #region Destroying Cubes
 
-    public void DestroyCubesAt(int column, int row) // Destroys the selected cube.
+    private void DestroyCubesAt(int column, int row) // Destroys the selected cube.
     {
         if (allCubes[column, row].TryGetComponent(out Cube cube))
         {
@@ -219,11 +220,11 @@ public class GameManager : MonoSingleton<GameManager>
         allCubes[column, row] = null;
     }
 
-    public IEnumerator DestroyCubes(GameObject group) // Destroy all the dots in the selected cube.
+    public IEnumerator DestroyCubes(GameObject group) // Destroy all the cubes in the selected cube.
     {
-        for (int i = 0; i < width; i++)
+        for (var i = 0; i < width; i++)
         {
-            for (int j = 0; j < height; j++)
+            for (var j = 0; j < height; j++)
             {
                 if (allCubes[i, j] != null && allCubes[i, j].TryGetComponent(out Cube cube))
                 {
@@ -251,20 +252,42 @@ public class GameManager : MonoSingleton<GameManager>
                             
                             yield return new WaitForSeconds(0.05f);
                         }
+                        else if (rocketCenter != cube.transform)
+                        {
+                            if (rocketCenter != null)
+                            {
+                                CubeDestroyed?.Invoke();
+                                cube.JoinToTheRocket();
+                                allCubes[i, j] = null;
+                            }
+                            else
+                            {
+                                DestroyCubesAt(i, j);
+                                CubeDestroyed?.Invoke();
+                                var particleName = cube.tag + "Rocks";
+                                Pool.Instance.SpawnObject(cube.transform.position, particleName, null, 1f);
+                                CheckForBalloon(i, j);
+                            }
+                        }
                         else
                         {
-                            CubeDestroyed?.Invoke();
-                            var particleName = cube.tag + "Rocks";
-                            Pool.Instance.SpawnObject(cube.transform.position, particleName, null, 0.5f);
                             CheckForBalloon(i, j);
-                            DestroyCubesAt(i, j);
                         }
                     }
                 }
             }
         }
 
-        Pool.Instance.DeactivateObject(group);
+        if (rocketCenter == null)
+        {
+            Pool.Instance.DeactivateObject(group);
+        }
+        else
+        {
+            rocketCenter = null;
+            yield return new WaitForSeconds(0.25f);
+        }
+        
         DecreaseRow();
     }
 

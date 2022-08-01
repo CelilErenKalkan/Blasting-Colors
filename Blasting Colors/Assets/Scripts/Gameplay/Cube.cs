@@ -11,7 +11,7 @@ public class Cube : MonoBehaviour
     private Vector2 tempPos;
     private SpriteRenderer spriteRenderer;
     private int goalNo;
-
+    private GameManager _manager;
 
     private bool isDestroyed;
     public bool isBalloon;
@@ -19,6 +19,7 @@ public class Cube : MonoBehaviour
 
     private void Start()
     {
+        _manager = GameManager.Instance;
         OnTurnEnded();
     }
 
@@ -35,7 +36,7 @@ public class Cube : MonoBehaviour
     private void OnTurnEnded()
     {
         if (isDestroyed) return;
-        tempPos = GameManager.Instance.matrixTransforms[column, row];
+        tempPos = _manager.matrixTransforms[column, row];
         transform.DOMove(tempPos, 0.5f).SetEase(Ease.OutBounce).OnComplete(SetCube);
         if (TryGetComponent(out SpriteRenderer renderer)) renderer.sortingOrder = row;
     }
@@ -43,24 +44,28 @@ public class Cube : MonoBehaviour
     private void SetCube()
     {
         transform.position = tempPos;
-        GameManager.Instance.allCubes[column, row] = gameObject;
-        CheckIcon();
-        
+        _manager.allCubes[column, row] = gameObject;
+
         if (isDuck && row == 0)
             DestroyThisCube();
     }
 
     private void OnMouseUp()
     {
-        if (GameManager.Instance.isPlayable)
+        if (_manager.isPlayable)
         {
-            GameManager.Instance.isPlayable = false;
+            _manager.isPlayable = false;
             if (isDuck || isBalloon || transform.parent.childCount <= 1)
             {
                 if (TryGetComponent(out Animator animator)) animator.SetTrigger("isWrong");
             }
             else
-                StartCoroutine(GameManager.Instance.DestroyCubes(group));
+            {
+                if (group.transform.childCount >= 3)
+                    _manager.rocketCenter = transform;
+                
+                StartCoroutine(_manager.DestroyCubes(group));
+            }
             
         }
     }
@@ -83,45 +88,46 @@ public class Cube : MonoBehaviour
         transform.SetParent(null);
         isDestroyed = true;
 
-        var goalPosition = GameManager.Instance.goalList[goalNo].transform.position;
+        var goalPosition = _manager.goalList[goalNo].transform.position;
         transform.DOJump(goalPosition, -5, 1, 1).OnComplete(DestroyThisCube);
     }
 
-    public void DestroyThisCube()
+    public void JoinToTheRocket()
+    {
+        if (TryGetComponent(out SpriteRenderer spriteRenderer))
+            spriteRenderer.sortingOrder = 21;
+        transform.SetParent(null);
+        isDestroyed = true;
+
+        var targetPosition = _manager.rocketCenter.position;
+        transform.DOMove(targetPosition, 0.25f).OnComplete(DestroyThisCube);
+    }
+
+    private void DestroyThisCube()
     {
         if (isDuck)
         {
-            StartCoroutine(GameManager.Instance.DestroyCubes(group));
+            StartCoroutine(_manager.DestroyCubes(group));
         }
         else if (isBalloon)
         {
             Pool.Instance.SpawnObject(transform.position, "BalloonParticle", null, 1f);
-            GameManager.Instance.allCubes[column, row] = null;
+            _manager.allCubes[column, row] = null;
             BalloonDestroyed?.Invoke();
         }
-        else
+        else if (gameObject.CompareTag(_manager.goalList[goalNo].tag))
         {
             Pool.Instance.SpawnObject(transform.position, "StarParticle", null, 1f);
-            GameManager.Instance.goalAmounts[goalNo]--;
+            _manager.goalAmounts[goalNo]--;
             GoalAmountChanged?.Invoke();
         }
-        
+
         Destroy(gameObject);
     }
 
     public void SetIsPlayable()
     {
-        GameManager.Instance.isPlayable = true;
-    }
-    
-    public void CheckIcon()
-    {
-        var amount = transform.parent.childCount;
-        if (TryGetComponent(out SpriteRenderer spriteRenderer))
-        {
-            spriteRenderer.sprite = amount <= 5 ? Resources.Load<Sprite>("2D/" + gameObject.tag + "/" + gameObject.tag + "_A") 
-                : Resources.Load<Sprite>("2D/" + gameObject.tag + "/" + gameObject.tag + "_B");
-        }
+        _manager.isPlayable = true;
     }
 
 }
