@@ -279,9 +279,7 @@ public class GameManager : MonoSingleton<GameManager>
         }
 
         if (rocketCenter == null)
-        {
             Pool.Instance.DeactivateObject(group);
-        }
         else
         {
             rocketCenter = null;
