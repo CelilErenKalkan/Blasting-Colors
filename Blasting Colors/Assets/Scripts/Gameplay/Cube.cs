@@ -44,6 +44,7 @@ public class Cube : MonoBehaviour
     {
         transform.position = tempPos;
         GameManager.Instance.allCubes[column, row] = gameObject;
+        CheckIcon();
         
         if (isDuck && row == 0)
             DestroyThisCube();
@@ -111,6 +112,16 @@ public class Cube : MonoBehaviour
     public void SetIsPlayable()
     {
         GameManager.Instance.isPlayable = true;
+    }
+    
+    public void CheckIcon()
+    {
+        var amount = transform.parent.childCount;
+        if (TryGetComponent(out SpriteRenderer spriteRenderer))
+        {
+            spriteRenderer.sprite = amount <= 5 ? Resources.Load<Sprite>("2D/" + gameObject.tag + "/" + gameObject.tag + "_A") 
+                : Resources.Load<Sprite>("2D/" + gameObject.tag + "/" + gameObject.tag + "_B");
+        }
     }
 
 }
