@@ -22,6 +22,7 @@ TagManager:
   - GreenRocks
   - PurpleRocks
   - YellowRocks
+  - Rocket
   layers:
   - Default
   - TransparentFX

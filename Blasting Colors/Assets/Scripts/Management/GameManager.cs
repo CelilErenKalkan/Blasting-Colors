@@ -83,12 +83,12 @@ public class GameManager : MonoSingleton<GameManager>
                     var cubeToUse = 0;
                     var duckOrBalloonChance = Random.Range(0, 100);
                     
-                    if (duckOrBalloonChance <= 10 && j > 1) 
+                    if (duckOrBalloonChance <= 5 && j > 0) 
                         cubeToUse = 5;
-                    else if (duckOrBalloonChance <= 30 && duckOrBalloonChance > 10)
+                    else if (duckOrBalloonChance <= 10 && duckOrBalloonChance > 5)
                         cubeToUse = 6;
                     else
-                        cubeToUse = Random.Range(0, cubes.Length - 2);
+                        cubeToUse = Random.Range(0, cubes.Length - 4);
 
                     var cube = Instantiate(cubes[cubeToUse], temPos, Quaternion.identity);
                     allCubes[i, j] = cube;
@@ -107,18 +107,17 @@ public class GameManager : MonoSingleton<GameManager>
         Grouping();
     }
     
-    private void CheckShuffling() // Shuffles if all the dots are different from each other.
+    private void CheckShuffling() // Shuffles if all the cubes are different from each other.
     {
         if (ShouldShuffle())
         {
-            Debug.Log("Shuffling the Board.");
-            for (int i = 0; i < width; i++)
+            for (var i = 0; i < width; i++)
             {
-                for (int j = 0; j < height; j++)
+                for (var j = 0; j < height; j++)
                 {
-                    var dot = allCubes[i, j];
+                    var cube = allCubes[i, j];
                     allCubes[i, j] = null;
-                    Destroy(dot);
+                    Destroy(cube);
                 }
             }
 
@@ -233,6 +232,7 @@ public class GameManager : MonoSingleton<GameManager>
                         if (cube.isDuck)
                         {
                             DuckDestroyed?.Invoke();
+                            moves++;
                             Pool.Instance.SpawnObject(cube.transform.position, "BalloonParticle", null, 1f);
                             DestroyCubesAt(i, j);
                         }
@@ -355,9 +355,9 @@ public class GameManager : MonoSingleton<GameManager>
     private bool ShouldShuffle() // Checking if shuffling necessary.
     {
         var count = 0;
-        for (int i = 0; i < width; i++)
+        for (var i = 0; i < width; i++)
         {
-            for (int j = 0; j < height; j++)
+            for (var j = 0; j < height; j++)
             {
                 if (allCubes[i, j].transform.parent.childCount > 1)
                     count++;

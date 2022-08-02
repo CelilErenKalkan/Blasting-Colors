@@ -2,6 +2,7 @@
 using DG.Tweening;
 using UnityEngine;
 using static Actions;
+using Random = UnityEngine.Random;
 
 public class Cube : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class Cube : MonoBehaviour
     private bool isDestroyed;
     public bool isBalloon;
     public bool isDuck;
+    public bool isRocket;
+    public bool isVertical;
 
     private void Start()
     {
@@ -70,9 +73,13 @@ public class Cube : MonoBehaviour
                         break;
                     }
                 }
-                
-                if (group.transform.childCount >= 5 && !isGoal)
+
+                if (group.transform.childCount >= 3 && !isGoal)
+                {
                     _manager.rocketCenter = transform;
+                    var targetScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    transform.DOScale(targetScale, 0.4f).SetEase(Ease.InBack).OnComplete(SetRocket);
+                }
                 
                 StartCoroutine(_manager.DestroyCubes(group));
             }
@@ -133,6 +140,23 @@ public class Cube : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+    
+    private void SetRocket()
+    {
+        var randomRocket = Random.Range(1, 3);
+        Instantiate(_manager.cubes[_manager.cubes.Length - randomRocket], transform, false);
+        isRocket = true;
+        gameObject.tag = "Rocket";
+        if (TryGetComponent(out SpriteRenderer spriteRenderer))
+        {
+            var order = spriteRenderer.sortingOrder;
+            spriteRenderer.enabled = false;
+            foreach (Transform child in transform.GetChild(0))
+            {
+                if (child.TryGetComponent(out SpriteRenderer renderer)) renderer.sortingOrder = order;
+            }
+        }
     }
 
     public void SetIsPlayable()
