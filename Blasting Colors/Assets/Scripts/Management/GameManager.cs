@@ -84,9 +84,9 @@ public class GameManager : MonoSingleton<GameManager>
                     var cubeToUse = 0;
                     var duckOrBalloonChance = Random.Range(0, 100);
 
-                    if (duckOrBalloonChance <= 5 && j > 0)
+                    if (duckOrBalloonChance <= 10 && j > 0)
                         cubeToUse = 5;
-                    else if (duckOrBalloonChance <= 10 && duckOrBalloonChance > 5)
+                    else if (duckOrBalloonChance <= 20 && duckOrBalloonChance > 10)
                         cubeToUse = 6;
                     else
                         cubeToUse = Random.Range(0, cubes.Length - 4);
@@ -163,7 +163,7 @@ public class GameManager : MonoSingleton<GameManager>
         {
             for (int j = 0; j < height; j++)
             {
-                if (allCubes[i, j].TryGetComponent(out Cube cube))
+                if (allCubes[i, j] != null && allCubes[i, j].TryGetComponent(out Cube cube))
                 {
                     if (!cube.isBalloon && !cube.isDuck)
                     {
@@ -209,6 +209,8 @@ public class GameManager : MonoSingleton<GameManager>
     {
         if (allCubes[column, row].TryGetComponent(out Cube cube))
         {
+            cube.isDestroyed = true;
+            
             if (cube.isBalloon)
             {
                 Pool.Instance.SpawnObject(cube.transform.position, "BalloonParticle", null, 1f);
@@ -226,9 +228,7 @@ public class GameManager : MonoSingleton<GameManager>
         {
             if (cube.isDuck)
             {
-                DuckDestroyed?.Invoke();
                 moves++;
-                Pool.Instance.SpawnObject(cube.transform.position, "BalloonParticle", null, 1f);
                 DestroyCubesAt(column, row);
             }
             else if (allCubes[column, row].CompareTag(goalList[0].tag) && goalAmounts[0] > 0)
@@ -257,15 +257,16 @@ public class GameManager : MonoSingleton<GameManager>
                 }
                 else
                 {
-                    DestroyCubesAt(column, row);
-                    CubeDestroyed?.Invoke();
+                    CheckForBalloon(column, row);
+                    
                     if (!cube.isRocket && !cube.isBalloon)
                     {
                         var particleName = cube.tag + "Rocks";
                         Pool.Instance.SpawnObject(cube.transform.position, particleName, null, 1f);
                     }
-
-                    CheckForBalloon(column, row);
+                    
+                    CubeDestroyed?.Invoke();
+                    DestroyCubesAt(column, row);
                 }
             }
             else
@@ -273,18 +274,17 @@ public class GameManager : MonoSingleton<GameManager>
                 CheckForBalloon(column, row);
             }
         }
-
-        //yield return new WaitForSeconds(0.05f);
+        
         _isOnce = false;
     }
 
-    public IEnumerator DestroyCubes(GameObject group) // Destroy all the cubes in the selected cube.
+    public IEnumerator DestroyCubes(int column, int row, GameObject group) // Destroy all the cubes in the selected cube.
     {
         for (var i = 0; i < width; i++)
         {
             for (var j = 0; j < height; j++)
             {
-                if (allCubes[i, j] != null && allCubes[i, j].transform.parent == group.transform)
+                if (allCubes[i, j] != null && allCubes[i, j] != allCubes[column, row] && allCubes[i, j].transform.parent == group.transform)
                 {
                     yield return new WaitUntil(() => !_isOnce);
                     _isOnce = true;
@@ -293,6 +293,7 @@ public class GameManager : MonoSingleton<GameManager>
             }
         }
 
+        StartCoroutine(DestructionCheck(column, row));
         if (rocketCenter == null)
             Pool.Instance.DeactivateObject(group);
         else
@@ -304,7 +305,7 @@ public class GameManager : MonoSingleton<GameManager>
         DecreaseRow();
     }
 
-    public IEnumerator LaunchRocket(int column, int row, bool isHorizontal) // Destroy all the cubes in the selected cube.
+    public IEnumerator LaunchRocket(int column, int row, bool isHorizontal) // Launch the rocket to destroy all cubes in the line.
     {
         if (isHorizontal)
         {
@@ -392,7 +393,7 @@ public class GameManager : MonoSingleton<GameManager>
         }
     }
 
-    private void DecreaseRow() // Fills the empty places.
+    public void DecreaseRow() // Fills the empty places.
     {
         var nullCount = 0;
         for (var i = 0; i < width; i++)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -15,7 +16,7 @@ public class Cube : MonoBehaviour
     private int goalNo;
     private GameManager _manager;
 
-    private bool isDestroyed;
+    [HideInInspector]public bool isDestroyed;
     public bool isBalloon;
     public bool isDuck;
     public bool isRocket;
@@ -51,7 +52,7 @@ public class Cube : MonoBehaviour
         _manager.allCubes[column, row] = gameObject;
 
         if (isDuck && row == 0)
-            DestroyThisCube();
+            StartCoroutine(DestroyDuck());
     }
 
     private void OnMouseUp()
@@ -77,14 +78,14 @@ public class Cube : MonoBehaviour
                     }
                 }
 
-                if (group.transform.childCount >= 3 && !isGoal)
+                if (group.transform.childCount >= 5 && !isGoal)
                 {
                     _manager.rocketCenter = transform;
                     var targetScale = new Vector3(0.1f, 0.1f, 0.1f);
                     transform.DOScale(targetScale, 0.4f).SetEase(Ease.InBack).OnComplete(SetRocket);
                 }
                 
-                StartCoroutine(_manager.DestroyCubes(group));
+                StartCoroutine(_manager.DestroyCubes(column, row, group));
             }
             
         }
@@ -135,11 +136,7 @@ public class Cube : MonoBehaviour
 
     private void DestroyThisCube()
     {
-        if (isDuck && _manager.allCubes[column, row] != null)
-        {
-            StartCoroutine(_manager.DestroyCubes(group));
-        }
-        else if (isBalloon)
+        if (isBalloon)
         {
             Pool.Instance.SpawnObject(transform.position, "BalloonParticle", null, 1f);
             _manager.allCubes[column, row] = null;
@@ -153,6 +150,24 @@ public class Cube : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+
+    private IEnumerator DestroyDuck()
+    {
+        if (isDuck && _manager.allCubes[column, row] != null)
+        {
+            isDestroyed = true;
+            _manager.isPlayable = false;
+            _manager.moves++;
+            Pool.Instance.SpawnObject(transform.position, "BalloonParticle", null, 1f);
+            _manager.allCubes[column, row] = null;
+            DuckDestroyed?.Invoke();
+            if (TryGetComponent(out SpriteRenderer renderer)) renderer.enabled = true;
+
+            yield return new WaitForSeconds(0.05f);
+            _manager.DecreaseRow();
+            Destroy(gameObject);
+        }
     }
     
     private void SetRocket()
