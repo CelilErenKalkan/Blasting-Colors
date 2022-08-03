@@ -21,6 +21,8 @@ public class GameManager : MonoSingleton<GameManager>
     public GameObject[] cubes;
     public Transform rocketCenter;
 
+    private bool _isOnce;
+    
     private void OnEnable()
     {
         TurnEnded += CheckIsGameFinished;
@@ -257,7 +259,7 @@ public class GameManager : MonoSingleton<GameManager>
                 {
                     DestroyCubesAt(column, row);
                     CubeDestroyed?.Invoke();
-                    if (!cube.isRocket)
+                    if (!cube.isRocket && !cube.isBalloon)
                     {
                         var particleName = cube.tag + "Rocks";
                         Pool.Instance.SpawnObject(cube.transform.position, particleName, null, 1f);
@@ -273,6 +275,7 @@ public class GameManager : MonoSingleton<GameManager>
         }
 
         //yield return new WaitForSeconds(0.05f);
+        _isOnce = false;
     }
 
     public IEnumerator DestroyCubes(GameObject group) // Destroy all the cubes in the selected cube.
@@ -283,6 +286,8 @@ public class GameManager : MonoSingleton<GameManager>
             {
                 if (allCubes[i, j] != null && allCubes[i, j].transform.parent == group.transform)
                 {
+                    yield return new WaitUntil(() => !_isOnce);
+                    _isOnce = true;
                     StartCoroutine(DestructionCheck(i, j));
                 }
             }
