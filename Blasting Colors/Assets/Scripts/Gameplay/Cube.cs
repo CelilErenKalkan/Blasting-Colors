@@ -1,6 +1,7 @@
 ﻿using System;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Serialization;
 using static Actions;
 using Random = UnityEngine.Random;
 
@@ -18,7 +19,7 @@ public class Cube : MonoBehaviour
     public bool isBalloon;
     public bool isDuck;
     public bool isRocket;
-    public bool isVertical;
+    public bool isHorizontal;
 
     private void Start()
     {
@@ -58,7 +59,11 @@ public class Cube : MonoBehaviour
         if (_manager.isPlayable)
         {
             _manager.isPlayable = false;
-            if (isDuck || isBalloon || transform.parent.childCount <= 1)
+            if (isRocket)
+            {
+                _manager.LaunchRocket(column, row, isHorizontal);
+            }
+            else if (isDuck || isBalloon || transform.parent.childCount <= 1)
             {
                 if (TryGetComponent(out Animator animator)) animator.SetTrigger("isWrong");
             }
@@ -74,7 +79,7 @@ public class Cube : MonoBehaviour
                     }
                 }
 
-                if (group.transform.childCount >= 3 && !isGoal)
+                if (group.transform.childCount >= 5 && !isGoal)
                 {
                     _manager.rocketCenter = transform;
                     var targetScale = new Vector3(0.1f, 0.1f, 0.1f);
@@ -145,6 +150,8 @@ public class Cube : MonoBehaviour
     private void SetRocket()
     {
         var randomRocket = Random.Range(1, 3);
+        if (randomRocket > 1)
+            isHorizontal = true;
         Instantiate(_manager.cubes[_manager.cubes.Length - randomRocket], transform, false);
         isRocket = true;
         gameObject.tag = "Rocket";

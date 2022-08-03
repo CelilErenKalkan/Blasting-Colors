@@ -9,10 +9,10 @@ public class GameManager : MonoSingleton<GameManager>
 {
     [HideInInspector] public int width;
     [HideInInspector] public int height;
-    [HideInInspector]public float offset;
-    [HideInInspector]public bool isPlayable;
-    [HideInInspector]public List<GameObject> goalList = new List<GameObject>();
-    
+    [HideInInspector] public float offset;
+    [HideInInspector] public bool isPlayable;
+    [HideInInspector] public List<GameObject> goalList = new List<GameObject>();
+
     public int moves = 30;
     public List<int> goalAmounts;
     private GameObject groups;
@@ -27,7 +27,7 @@ public class GameManager : MonoSingleton<GameManager>
         GoalAmountChanged += CheckIsGameFinished;
         LevelStart += OnGameStarted;
     }
-    
+
     private void OnDisable()
     {
         TurnEnded -= CheckIsGameFinished;
@@ -50,7 +50,7 @@ public class GameManager : MonoSingleton<GameManager>
         {
             if (goalAmount > 0) isGoalAmountFinished = false;
         }
-        
+
         if (isGoalAmountFinished)
         {
             LevelSuccess?.Invoke();
@@ -64,13 +64,12 @@ public class GameManager : MonoSingleton<GameManager>
             StartCoroutine(SetUp(10));
         }
     }
-    
+
 
     #region SetUp
 
     private IEnumerator SetUp(float timeIndex)
     {
-
         for (var i = 0; i < width; i++)
         {
             for (var j = 0; j < height; j++)
@@ -82,8 +81,8 @@ public class GameManager : MonoSingleton<GameManager>
 
                     var cubeToUse = 0;
                     var duckOrBalloonChance = Random.Range(0, 100);
-                    
-                    if (duckOrBalloonChance <= 5 && j > 0) 
+
+                    if (duckOrBalloonChance <= 5 && j > 0)
                         cubeToUse = 5;
                     else if (duckOrBalloonChance <= 10 && duckOrBalloonChance > 5)
                         cubeToUse = 6;
@@ -102,11 +101,11 @@ public class GameManager : MonoSingleton<GameManager>
                 }
             }
         }
-        
-        
+
+
         Grouping();
     }
-    
+
     private void CheckShuffling() // Shuffles if all the cubes are different from each other.
     {
         if (ShouldShuffle())
@@ -199,7 +198,7 @@ public class GameManager : MonoSingleton<GameManager>
         CheckShuffling();
         isPlayable = true;
     }
-    
+
     #endregion
 
     #region Destroying Cubes
@@ -214,9 +213,66 @@ public class GameManager : MonoSingleton<GameManager>
                 BalloonDestroyed?.Invoke();
             }
         }
-        
+
         Destroy(allCubes[column, row]);
         allCubes[column, row] = null;
+    }
+
+    private IEnumerator DestructionCheck(int column, int row)
+    {
+        if (allCubes[column, row] != null && allCubes[column, row].TryGetComponent(out Cube cube))
+        {
+            if (cube.isDuck)
+            {
+                DuckDestroyed?.Invoke();
+                moves++;
+                Pool.Instance.SpawnObject(cube.transform.position, "BalloonParticle", null, 1f);
+                DestroyCubesAt(column, row);
+            }
+            else if (allCubes[column, row].CompareTag(goalList[0].tag) && goalAmounts[0] > 0)
+            {
+                CheckForBalloon(column, row);
+                cube.JumpToGoal(0);
+                allCubes[column, row] = null;
+
+                //yield return new WaitForSeconds(0.05f);
+            }
+            else if (allCubes[column, row].CompareTag(goalList[1].tag) && goalAmounts[1] > 0)
+            {
+                CheckForBalloon(column, row);
+                cube.JumpToGoal(1);
+                allCubes[column, row] = null;
+
+                //yield return new WaitForSeconds(0.05f);
+            }
+            else if (rocketCenter != cube.transform)
+            {
+                if (rocketCenter != null)
+                {
+                    CubeDestroyed?.Invoke();
+                    cube.JoinToTheRocket();
+                    allCubes[column, row] = null;
+                }
+                else
+                {
+                    DestroyCubesAt(column, row);
+                    CubeDestroyed?.Invoke();
+                    if (!cube.isRocket)
+                    {
+                        var particleName = cube.tag + "Rocks";
+                        Pool.Instance.SpawnObject(cube.transform.position, particleName, null, 1f);
+                    }
+
+                    CheckForBalloon(column, row);
+                }
+            }
+            else
+            {
+                CheckForBalloon(column, row);
+            }
+        }
+
+        yield return new WaitForSeconds(0.05f);
     }
 
     public IEnumerator DestroyCubes(GameObject group) // Destroy all the cubes in the selected cube.
@@ -225,55 +281,9 @@ public class GameManager : MonoSingleton<GameManager>
         {
             for (var j = 0; j < height; j++)
             {
-                if (allCubes[i, j] != null && allCubes[i, j].TryGetComponent(out Cube cube))
+                if (allCubes[i, j] != null && allCubes[i, j].transform.parent == group.transform)
                 {
-                    if (allCubes[i, j] != null && cube.transform.parent == group.transform)
-                    {
-                        if (cube.isDuck)
-                        {
-                            DuckDestroyed?.Invoke();
-                            moves++;
-                            Pool.Instance.SpawnObject(cube.transform.position, "BalloonParticle", null, 1f);
-                            DestroyCubesAt(i, j);
-                        }
-                        else if (allCubes[i, j].CompareTag(goalList[0].tag) && goalAmounts[0] > 0)
-                        {
-                            CheckForBalloon(i, j);
-                            cube.JumpToGoal(0);
-                            allCubes[i, j] = null;
-
-                            yield return new WaitForSeconds(0.05f);
-                        }
-                        else if (allCubes[i, j].CompareTag(goalList[1].tag) && goalAmounts[1] > 0)
-                        {
-                            CheckForBalloon(i, j);
-                            cube.JumpToGoal(1);
-                            allCubes[i, j] = null;
-                            
-                            yield return new WaitForSeconds(0.05f);
-                        }
-                        else if (rocketCenter != cube.transform)
-                        {
-                            if (rocketCenter != null)
-                            {
-                                CubeDestroyed?.Invoke();
-                                cube.JoinToTheRocket();
-                                allCubes[i, j] = null;
-                            }
-                            else
-                            {
-                                DestroyCubesAt(i, j);
-                                CubeDestroyed?.Invoke();
-                                var particleName = cube.tag + "Rocks";
-                                Pool.Instance.SpawnObject(cube.transform.position, particleName, null, 1f);
-                                CheckForBalloon(i, j);
-                            }
-                        }
-                        else
-                        {
-                            CheckForBalloon(i, j);
-                        }
-                    }
+                    StartCoroutine(DestructionCheck(i, j));
                 }
             }
         }
@@ -285,37 +295,67 @@ public class GameManager : MonoSingleton<GameManager>
             rocketCenter = null;
             yield return new WaitForSeconds(0.5f);
         }
+
+        DecreaseRow();
+    }
+
+    public void LaunchRocket(int column, int row, bool isHorizontal) // Destroy all the cubes in the selected cube.
+    {
+        if (isHorizontal)
+        {
+            for (var i = 0; i < width; i++)
+            {
+                if (column + i < width)
+                    StartCoroutine(DestructionCheck(column + i, row));
+                if (column - i >= 0)
+                    StartCoroutine(DestructionCheck(column - i, row));
+            }
+        }
+        else
+        {
+            for (var i = 0; i < height; i++)
+            {
+                if (row + i < height)
+                    StartCoroutine(DestructionCheck(column, row + i));
+                if (row - i >= 0)
+                    StartCoroutine(DestructionCheck(column, row + i));
+            }
+        }
         
         DecreaseRow();
     }
 
     private void CheckForBalloon(int column, int row)
     {
-        if (column + 1 < width && allCubes[column + 1, row] != null && allCubes[column + 1, row].TryGetComponent(out Cube rightCube))
+        if (column + 1 < width && allCubes[column + 1, row] != null &&
+            allCubes[column + 1, row].TryGetComponent(out Cube rightCube))
         {
             if (rightCube.isBalloon)
             {
                 DestroyCubesAt(column + 1, row);
             }
         }
-        
-        if (column - 1 >= 0 && allCubes[column - 1, row] != null && allCubes[column - 1, row].TryGetComponent(out Cube leftCube))
+
+        if (column - 1 >= 0 && allCubes[column - 1, row] != null &&
+            allCubes[column - 1, row].TryGetComponent(out Cube leftCube))
         {
             if (leftCube.isBalloon)
             {
                 DestroyCubesAt(column - 1, row);
             }
         }
-        
-        if (row + 1 < height && allCubes[column, row + 1] != null && allCubes[column, row + 1].TryGetComponent(out Cube upperCube))
+
+        if (row + 1 < height && allCubes[column, row + 1] != null &&
+            allCubes[column, row + 1].TryGetComponent(out Cube upperCube))
         {
             if (upperCube.isBalloon)
             {
                 DestroyCubesAt(column, row + 1);
             }
         }
-        
-        if (row - 1 >= 0 && allCubes[column, row - 1] != null && allCubes[column, row - 1].TryGetComponent(out Cube downCube))
+
+        if (row - 1 >= 0 && allCubes[column, row - 1] != null &&
+            allCubes[column, row - 1].TryGetComponent(out Cube downCube))
         {
             if (downCube.isBalloon)
             {
@@ -348,7 +388,7 @@ public class GameManager : MonoSingleton<GameManager>
 
             nullCount = 0;
         }
-        
+
         TurnEnded?.Invoke();
     }
 
@@ -371,6 +411,6 @@ public class GameManager : MonoSingleton<GameManager>
     {
         deactive.gameObject.SetActive(false);
     }
-    
+
     #endregion
 }
