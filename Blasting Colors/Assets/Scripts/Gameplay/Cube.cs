@@ -79,7 +79,7 @@ public class Cube : MonoBehaviour
                     }
                 }
 
-                if (group.transform.childCount >= 5 && !isGoal)
+                if (group.transform.childCount >= 3 && !isGoal)
                 {
                     _manager.rocketCenter = transform;
                     var targetScale = new Vector3(0.1f, 0.1f, 0.1f);
@@ -127,7 +127,7 @@ public class Cube : MonoBehaviour
 
     private void DestroyThisCube()
     {
-        if (isDuck)
+        if (isDuck && _manager.allCubes[column, row] != null)
         {
             StartCoroutine(_manager.DestroyCubes(group));
         }

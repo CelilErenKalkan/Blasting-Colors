@@ -235,7 +235,7 @@ public class GameManager : MonoSingleton<GameManager>
                 cube.JumpToGoal(0);
                 allCubes[column, row] = null;
 
-                //yield return new WaitForSeconds(0.05f);
+                yield return new WaitForSeconds(0.1f);
             }
             else if (allCubes[column, row].CompareTag(goalList[1].tag) && goalAmounts[1] > 0)
             {
@@ -243,7 +243,7 @@ public class GameManager : MonoSingleton<GameManager>
                 cube.JumpToGoal(1);
                 allCubes[column, row] = null;
 
-                //yield return new WaitForSeconds(0.05f);
+                yield return new WaitForSeconds(0.1f);
             }
             else if (rocketCenter != cube.transform)
             {
@@ -272,7 +272,7 @@ public class GameManager : MonoSingleton<GameManager>
             }
         }
 
-        yield return new WaitForSeconds(0.05f);
+        //yield return new WaitForSeconds(0.05f);
     }
 
     public IEnumerator DestroyCubes(GameObject group) // Destroy all the cubes in the selected cube.
@@ -318,7 +318,7 @@ public class GameManager : MonoSingleton<GameManager>
                 if (row + i < height)
                     StartCoroutine(DestructionCheck(column, row + i));
                 if (row - i >= 0)
-                    StartCoroutine(DestructionCheck(column, row + i));
+                    StartCoroutine(DestructionCheck(column, row - i));
             }
         }
         
