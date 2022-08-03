@@ -35,17 +35,18 @@ public class Goals : MonoBehaviour
         
         for (var i = 0; i < 2; i++)
         {
-            random = Random.Range(0, manager.cubes.Length);
+            manager.goalList.Add(transform.GetChild(i).gameObject);
+            
+            random = Random.Range(0, manager.cubes.Length - 2);
             var goalName = "Goal" + i;
             var goalCubeNo = PlayerPrefs.GetInt(goalName, random);
 
-            if (i > 0 && manager.cubes[goalCubeNo].CompareTag(manager.goalList[i - 1].tag))
+            if (i > 0 && transform.GetChild(i - 1).CompareTag(manager.cubes[goalCubeNo].tag))
             {
                 random = GetExcludedRandomValue();
             }
             
             transform.GetChild(i).tag = manager.cubes[goalCubeNo].tag;
-            manager.goalList.Add(transform.GetChild(i).gameObject);
 
             if (transform.GetChild(i).TryGetComponent(out Image image) &&
                 manager.cubes[goalCubeNo].TryGetComponent(out SpriteRenderer cubeImage))
@@ -79,7 +80,7 @@ public class Goals : MonoBehaviour
 
     private int GetExcludedRandomValue()
     {
-        var nextRandom = Random.Range(0, manager.cubes.Length);
+        var nextRandom = Random.Range(0, manager.cubes.Length - 2);
         if (nextRandom == random)
             GetExcludedRandomValue();
         

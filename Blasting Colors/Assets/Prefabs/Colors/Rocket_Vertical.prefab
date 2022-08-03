@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7287982978014999162}
   - component: {fileID: 2663584913304296687}
   - component: {fileID: 8088024153009683480}
+  - component: {fileID: 2877740223010496146}
   m_Layer: 0
   m_Name: Rocket
   m_TagString: Untagged
@@ -102,6 +103,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &2877740223010496146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6167849326972603231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bbf89364e364b241bdc83e1fe2e7739, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isRight: 0
 --- !u!1 &7949424921106412337
 GameObject:
   m_ObjectHideFlags: 0
@@ -246,7 +260,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bbf89364e364b241bdc83e1fe2e7739, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isVertical: 1
+  isRight: 0
 --- !u!1 &8183278442617654579
 GameObject:
   m_ObjectHideFlags: 0
@@ -258,6 +272,7 @@ GameObject:
   - component: {fileID: 5620893827299986816}
   - component: {fileID: 5711198911124845096}
   - component: {fileID: 4136480091652808948}
+  - component: {fileID: 6881969486780324653}
   m_Layer: 0
   m_Name: Rocket (1)
   m_TagString: Untagged
@@ -349,3 +364,16 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &6881969486780324653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8183278442617654579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bbf89364e364b241bdc83e1fe2e7739, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isRight: 1

@@ -1,20 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class Rocket : MonoBehaviour
 {
-    public bool isVertical;
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField]private bool isRight;
 
-    // Update is called once per frame
-    void Update()
+    public void Launch(bool isHorizontal)
     {
+        var targetTime = 0f;
+        var targetDistance = 0f;
+        var target = transform.position;
         
+        if (isHorizontal)
+        {
+            targetTime = GameManager.Instance.width * 0.12f;
+            targetDistance = GameManager.Instance.width * GameManager.Instance.offset;
+
+            if (isRight)
+                target.x += targetDistance;
+            else
+                target.x -= targetDistance;
+            transform.DOMove(target, targetTime);
+        }
+        else
+        {
+            targetTime = GameManager.Instance.height * 0.12f;
+            targetDistance = GameManager.Instance.height * GameManager.Instance.offset;
+            
+            if (isRight)
+                target.y += targetDistance;
+            else
+                target.y -= targetDistance;
+            transform.DOMove(target, targetTime);
+        }
     }
 }

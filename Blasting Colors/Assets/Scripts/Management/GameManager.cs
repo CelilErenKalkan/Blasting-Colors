@@ -348,6 +348,8 @@ public class GameManager : MonoSingleton<GameManager>
                 yield return new WaitForSeconds(0.05f);
             }
         }
+        
+        StartCoroutine(DestructionCheck(column, row));
         DecreaseRow();
     }
 

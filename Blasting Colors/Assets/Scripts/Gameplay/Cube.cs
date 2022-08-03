@@ -60,9 +60,7 @@ public class Cube : MonoBehaviour
         {
             _manager.isPlayable = false;
             if (isRocket)
-            {
-                StartCoroutine(_manager.LaunchRocket(column, row, isHorizontal));
-            }
+                LaunchTheRocket();
             else if (isDuck || isBalloon || transform.parent.childCount <= 1)
             {
                 if (TryGetComponent(out Animator animator)) animator.SetTrigger("isWrong");
@@ -123,6 +121,16 @@ public class Cube : MonoBehaviour
 
         var targetPosition = _manager.rocketCenter.position;
         transform.DOMove(targetPosition, 0.5f).SetEase(Ease.InBack).OnComplete(DestroyThisCube);
+    }
+
+    private void LaunchTheRocket()
+    {
+        foreach (Transform child in transform.GetChild(0))
+        {
+            if (child.TryGetComponent(out Rocket rocket)) rocket.Launch(isHorizontal);
+        }
+        
+        StartCoroutine(_manager.LaunchRocket(column, row, isHorizontal));
     }
 
     private void DestroyThisCube()
