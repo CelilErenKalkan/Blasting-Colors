@@ -304,29 +304,50 @@ public class GameManager : MonoSingleton<GameManager>
         DecreaseRow();
     }
 
-    public void LaunchRocket(int column, int row, bool isHorizontal) // Destroy all the cubes in the selected cube.
+    public IEnumerator LaunchRocket(int column, int row, bool isHorizontal) // Destroy all the cubes in the selected cube.
     {
         if (isHorizontal)
         {
-            for (var i = 0; i < width; i++)
+            for (var i = 1; i < width; i++)
             {
                 if (column + i < width)
+                {
+                    yield return new WaitUntil(() => !_isOnce);
+                    _isOnce = true;
                     StartCoroutine(DestructionCheck(column + i, row));
+                }
+
                 if (column - i >= 0)
+                {
+                    yield return new WaitUntil(() => !_isOnce);
+                    _isOnce = true;
                     StartCoroutine(DestructionCheck(column - i, row));
+                }
+                
+                yield return new WaitForSeconds(0.05f);
             }
         }
         else
         {
-            for (var i = 0; i < height; i++)
+            for (var i = 1; i < height; i++)
             {
                 if (row + i < height)
+                {
+                    yield return new WaitUntil(() => !_isOnce);
+                    _isOnce = true;
                     StartCoroutine(DestructionCheck(column, row + i));
+                }
+
                 if (row - i >= 0)
+                {
+                    yield return new WaitUntil(() => !_isOnce);
+                    _isOnce = true;
                     StartCoroutine(DestructionCheck(column, row - i));
+                }
+                
+                yield return new WaitForSeconds(0.05f);
             }
         }
-        
         DecreaseRow();
     }
 

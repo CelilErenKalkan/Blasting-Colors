@@ -61,7 +61,7 @@ public class Cube : MonoBehaviour
             _manager.isPlayable = false;
             if (isRocket)
             {
-                _manager.LaunchRocket(column, row, isHorizontal);
+                StartCoroutine(_manager.LaunchRocket(column, row, isHorizontal));
             }
             else if (isDuck || isBalloon || transform.parent.childCount <= 1)
             {
