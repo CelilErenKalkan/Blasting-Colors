@@ -81,10 +81,7 @@ public class Goals : MonoBehaviour
     private int GetExcludedRandomValue()
     {
         var nextRandom = Random.Range(0, manager.cubes.Length - 2);
-        if (nextRandom == random)
-            GetExcludedRandomValue();
-        
-        return random;
+        return nextRandom == random ? GetExcludedRandomValue() : random;
     }
 
     private void CheckGoalForDuck()

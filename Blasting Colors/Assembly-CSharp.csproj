@@ -72,6 +72,7 @@
      <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModulePhysics.cs" />
      <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUnityVersion.cs" />
      <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleSprite.cs" />
+     <Compile Include="Assets\Scripts\DuckAudioSource.cs" />
      <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUtils.cs" />
      <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUI.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Cube.cs" />
@@ -80,7 +81,6 @@
      <Compile Include="Assets\Scripts\Management\CanvasHelper.cs" />
      <Compile Include="Assets\Scripts\Screen Adjustment\CameraViewportHandler.cs" />
      <Compile Include="Assets\Scripts\Management\SoundManager.cs" />
-     <Compile Include="Assets\Scripts\DuckAudioSource.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
