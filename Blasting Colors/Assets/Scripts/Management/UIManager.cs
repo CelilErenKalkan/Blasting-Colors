@@ -53,7 +53,6 @@ public class UIManager : MonoBehaviour
 
     private void OnTurnEnded()
     {
-        GameManager.Instance.moves--;
         canvasHelper.SetMovesText();
     }
 }

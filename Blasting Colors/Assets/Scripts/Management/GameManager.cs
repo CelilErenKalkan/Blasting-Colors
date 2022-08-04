@@ -197,8 +197,28 @@ public class GameManager : MonoSingleton<GameManager>
             }
         }
 
-        CheckShuffling();
-        isPlayable = true;
+        CheckDucks();
+    }
+
+    private void CheckDucks()
+    {
+        var duckDestroyed = false;
+        for (var column = 0; column < width; column++)
+        {
+            if (allCubes[column, 0].TryGetComponent(out Cube cube))
+                if (cube.isDuck)
+                {
+                    duckDestroyed = true;
+                    cube.DestroyDuck();
+                }
+        }
+        if (duckDestroyed)
+            DecreaseRow();
+        else
+        {
+            CheckShuffling();
+            isPlayable = true;
+        }
     }
 
     #endregion
@@ -226,12 +246,8 @@ public class GameManager : MonoSingleton<GameManager>
     {
         if (allCubes[column, row] != null && allCubes[column, row].TryGetComponent(out Cube cube))
         {
-            if (cube.isDuck)
-            {
-                moves++;
-                DestroyCubesAt(column, row);
-            }
-            else if (allCubes[column, row].CompareTag(goalList[0].tag) && goalAmounts[0] > 0)
+
+            if (allCubes[column, row].CompareTag(goalList[0].tag) && goalAmounts[0] > 0)
             {
                 CheckForBalloon(column, row);
                 cube.JumpToGoal(0);
@@ -254,6 +270,10 @@ public class GameManager : MonoSingleton<GameManager>
                     CubeDestroyed?.Invoke();
                     cube.JoinToTheRocket();
                     allCubes[column, row] = null;
+                }
+                else if (cube.isDuck)
+                {
+                    DestroyCubesAt(column, row);
                 }
                 else
                 {
@@ -293,7 +313,9 @@ public class GameManager : MonoSingleton<GameManager>
             }
         }
 
+        yield return new WaitForSeconds(0.01f);
         StartCoroutine(DestructionCheck(column, row));
+        
         if (rocketCenter == null)
             Pool.Instance.DeactivateObject(group);
         else
@@ -428,7 +450,7 @@ public class GameManager : MonoSingleton<GameManager>
         {
             for (var j = 0; j < height; j++)
             {
-                if (allCubes[i, j].transform.parent.childCount > 1)
+                if (allCubes[i, j] != null && allCubes[i, j].transform.parent.childCount > 1)
                     count++;
             }
         }

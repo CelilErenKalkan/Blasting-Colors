@@ -719,7 +719,7 @@ ScriptsOnlyBuild:
     className: TMP_SubMeshUI
   - hash:
       serializedVersion: 2
-      Hash: 20ae7058856b3a4d8ad10c690d704761
+      Hash: 05f54d479577c358c2e2ccd37f699b6b
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Cube

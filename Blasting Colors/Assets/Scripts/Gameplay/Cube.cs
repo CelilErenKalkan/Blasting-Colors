@@ -52,7 +52,10 @@ public class Cube : MonoBehaviour
         _manager.allCubes[column, row] = gameObject;
 
         if (isDuck && row == 0)
-            StartCoroutine(DestroyDuck());
+        {
+            isDestroyed = true;
+            _manager.isPlayable = false;
+        }
     }
 
     private void OnMouseUp()
@@ -65,6 +68,7 @@ public class Cube : MonoBehaviour
             else if (isDuck || isBalloon || transform.parent.childCount <= 1)
             {
                 if (TryGetComponent(out Animator animator)) animator.SetTrigger("isWrong");
+                _manager.moves++;
             }
             else
             {
@@ -78,7 +82,7 @@ public class Cube : MonoBehaviour
                     }
                 }
 
-                if (group.transform.childCount >= 5 && !isGoal)
+                if (group.transform.childCount >= 3 && !isGoal)
                 {
                     _manager.rocketCenter = transform;
                     var targetScale = new Vector3(0.1f, 0.1f, 0.1f);
@@ -87,6 +91,8 @@ public class Cube : MonoBehaviour
                 
                 StartCoroutine(_manager.DestroyCubes(column, row, group));
             }
+            
+            _manager.moves--;
             
         }
     }
@@ -152,20 +158,14 @@ public class Cube : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private IEnumerator DestroyDuck()
+    public void DestroyDuck()
     {
-        if (isDuck && _manager.allCubes[column, row] != null)
+        if (_manager.allCubes[column, row] != null)
         {
-            isDestroyed = true;
-            _manager.isPlayable = false;
-            _manager.moves++;
             Pool.Instance.SpawnObject(transform.position, "BalloonParticle", null, 1f);
             _manager.allCubes[column, row] = null;
             DuckDestroyed?.Invoke();
-            if (TryGetComponent(out SpriteRenderer renderer)) renderer.enabled = true;
-
-            yield return new WaitForSeconds(0.05f);
-            _manager.DecreaseRow();
+            if (TryGetComponent(out SpriteRenderer renderer)) renderer.enabled = false;
             Destroy(gameObject);
         }
     }
