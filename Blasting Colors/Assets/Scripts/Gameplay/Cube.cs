@@ -82,7 +82,7 @@ public class Cube : MonoBehaviour
                     }
                 }
 
-                if (group.transform.childCount >= 3 && !isGoal)
+                if (group.transform.childCount >= 5 && !isGoal)
                 {
                     _manager.rocketCenter = transform;
                     var targetScale = new Vector3(0.1f, 0.1f, 0.1f);

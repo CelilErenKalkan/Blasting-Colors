@@ -15,7 +15,7 @@ public class Rocket : MonoBehaviour
         
         if (isHorizontal)
         {
-            targetTime = GameManager.Instance.width * 0.12f;
+            targetTime = GameManager.Instance.width * 0.24f;
             targetDistance = GameManager.Instance.width * GameManager.Instance.offset * 2;
 
             if (isRight)
@@ -26,7 +26,7 @@ public class Rocket : MonoBehaviour
         }
         else
         {
-            targetTime = GameManager.Instance.height * 0.12f;
+            targetTime = GameManager.Instance.height * 0.24f;
             targetDistance = GameManager.Instance.height * GameManager.Instance.offset * 2;
             
             if (isRight)

@@ -12,7 +12,19 @@ public class Goals : MonoBehaviour
     private int random;
 
     private GameManager manager;
-    
+    [SerializeField]private List<int> cubeAmount = new List<int>();
+
+    private void Start()
+    {
+        var amount = 0;
+        var count = GameManager.Instance.cubes.Length;
+        for (var i = 0; i < count; i++ )
+        {
+            cubeAmount.Add(amount);
+            amount++;
+        }
+    }
+
     private void OnEnable()
     {
         GoalAmountChanged += SetGoalTexts;
@@ -37,15 +49,13 @@ public class Goals : MonoBehaviour
         {
             manager.goalList.Add(transform.GetChild(i).gameObject);
             
-            random = Random.Range(0, manager.cubes.Length - 2);
+            random = Random.Range(0, cubeAmount.Count - 2);
+            random = cubeAmount[random];
+            cubeAmount.Remove(random);
+            
             var goalName = "Goal" + i;
             var goalCubeNo = PlayerPrefs.GetInt(goalName, random);
 
-            if (i > 0 && transform.GetChild(i - 1).CompareTag(manager.cubes[goalCubeNo].tag))
-            {
-                random = GetExcludedRandomValue();
-            }
-            
             transform.GetChild(i).tag = manager.cubes[goalCubeNo].tag;
 
             if (transform.GetChild(i).TryGetComponent(out Image image) &&
@@ -81,7 +91,10 @@ public class Goals : MonoBehaviour
     private int GetExcludedRandomValue()
     {
         var nextRandom = Random.Range(0, manager.cubes.Length - 2);
-        return nextRandom == random ? GetExcludedRandomValue() : random;
+        if (nextRandom == random)
+            return GetExcludedRandomValue();
+        
+        return random;
     }
 
     private void CheckGoalForDuck()
