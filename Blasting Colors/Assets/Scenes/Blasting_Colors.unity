@@ -1405,8 +1405,11 @@ MonoBehaviour:
   offset: 0
   isPlayable: 0
   goalList: []
+  rocketCenter: {fileID: 0}
   moves: 30
-  goalAmounts: 0f0000000f000000
+  duckSpawnChance: 5
+  balloonSpawnChance: 10
+  goalAmounts: 0a0000000a000000
   cubes:
   - {fileID: 7949424921106412337, guid: 4ab81c1103554f54cbeb48fc979ea151, type: 3}
   - {fileID: 7949424921106412337, guid: 1ca2ba077a419f04aa3a245024e6a64f, type: 3}
@@ -1417,7 +1420,6 @@ MonoBehaviour:
   - {fileID: 7949424921106412337, guid: d4b605686c1e1ad4ab334d35b7bbb390, type: 3}
   - {fileID: 7949424921106412337, guid: efb95caab93f5824aae73c4a2f7376e7, type: 3}
   - {fileID: 7949424921106412337, guid: acac4654669465440acb66a31ce58d73, type: 3}
-  rocketCenter: {fileID: 0}
 --- !u!114 &935568469
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -12,14 +12,16 @@ public class GameManager : MonoSingleton<GameManager>
     [HideInInspector] public float offset;
     [HideInInspector] public bool isPlayable;
     [HideInInspector] public List<GameObject> goalList = new List<GameObject>();
+    [HideInInspector]public Transform rocketCenter;
 
     public int moves = 30;
+    public int duckSpawnChance;
+    public int balloonSpawnChance;
     public List<int> goalAmounts;
     private GameObject groups;
     public GameObject[,] allCubes;
     public Vector2[,] matrixTransforms;
     public GameObject[] cubes;
-    public Transform rocketCenter;
 
     private bool _isOnce;
     
@@ -84,9 +86,9 @@ public class GameManager : MonoSingleton<GameManager>
                     var cubeToUse = 0;
                     var duckOrBalloonChance = Random.Range(0, 100);
 
-                    if (duckOrBalloonChance <= 10 && j > 0)
+                    if (duckOrBalloonChance <= duckSpawnChance && j > 0)
                         cubeToUse = 5;
-                    else if (duckOrBalloonChance <= 20 && duckOrBalloonChance > 10)
+                    else if (duckOrBalloonChance <= duckSpawnChance + balloonSpawnChance && duckOrBalloonChance > duckSpawnChance)
                         cubeToUse = 6;
                     else
                         cubeToUse = Random.Range(0, cubes.Length - 4);
@@ -415,7 +417,7 @@ public class GameManager : MonoSingleton<GameManager>
         }
     }
 
-    public void DecreaseRow() // Fills the empty places.
+    private void DecreaseRow() // Fills the empty places.
     {
         var nullCount = 0;
         for (var i = 0; i < width; i++)
