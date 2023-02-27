@@ -76,7 +76,7 @@ namespace Gameplay
                     var isGoal = false;
                     foreach (var goal in _gameManager.goalList)
                     {
-                        if (transform.CompareTag(goal.tag))
+                        if (cubeType == goal.cubeType)
                         {
                             isGoal = true;
                             break;
@@ -152,8 +152,8 @@ namespace Gameplay
         protected virtual void SetRocket()
         {
             var randomRocket = Random.Range(1, 3);
-            Instantiate(_gameManager.cubes[_gameManager.cubes.Length - randomRocket], transform, false);
-            gameObject.tag = "Rocket";
+            var rocket = Instantiate(_gameManager.cubes[_gameManager.cubes.Length - randomRocket], transform, false);
+            rocket.transform.position = transform.position;
             if (TryGetComponent(out SpriteRenderer spriteRenderer))
             {
                 var order = spriteRenderer.sortingOrder;

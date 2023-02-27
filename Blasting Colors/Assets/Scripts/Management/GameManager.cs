@@ -231,7 +231,7 @@ public class GameManager : MonoSingleton<GameManager>
         if (allCubes[column, row] != null && allCubes[column, row].TryGetComponent(out Cube cube))
         {
 
-            if (allCubes[column, row].CompareTag(goalList[0].tag) && goalAmounts[0] > 0)
+            if (cube.cubeType == goalList[0].cubeType && goalAmounts[0] > 0)
             {
                 CheckForBalloon(column, row);
                 cube.JumpToGoal(0);
@@ -239,7 +239,7 @@ public class GameManager : MonoSingleton<GameManager>
 
                 yield return new WaitForSeconds(0.1f);
             }
-            else if (allCubes[column, row].CompareTag(goalList[1].tag) && goalAmounts[1] > 0)
+            else if (cube.cubeType == goalList[1].cubeType && goalAmounts[1] > 0)
             {
                 CheckForBalloon(column, row);
                 cube.JumpToGoal(1);
@@ -254,10 +254,6 @@ public class GameManager : MonoSingleton<GameManager>
                     CubeDestroyed?.Invoke();
                     cube.JoinToTheRocket();
                     allCubes[column, row] = null;
-                }
-                else if (cube.cubeType == CubeType.Duck)
-                {
-                    cube.Destroy();
                 }
                 else
                 {

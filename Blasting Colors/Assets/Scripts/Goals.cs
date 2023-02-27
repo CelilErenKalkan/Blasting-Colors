@@ -13,13 +13,14 @@ public class Goals : MonoBehaviour
     private int random;
 
     private GameManager _gameManager;
-    [SerializeField]private List<int> cubeAmount = new List<int>();
+    private GameObject cube;
+    [SerializeField] private List<int> cubeAmount = new List<int>();
 
     private void Start()
     {
         var amount = 0;
         var count = GameManager.Instance.cubes.Length;
-        for (var i = 0; i < count; i++ )
+        for (var i = 0; i < count; i++)
         {
             cubeAmount.Add(amount);
             amount++;
@@ -33,7 +34,7 @@ public class Goals : MonoBehaviour
         BalloonDestroyed += CheckGoalForBalloon;
         LevelStart += SetGoals;
     }
-    
+
     private void OnDisable()
     {
         GoalAmountChanged -= SetGoalTexts;
@@ -45,30 +46,30 @@ public class Goals : MonoBehaviour
     private void SetGoals()
     {
         _gameManager = GameManager.Instance;
-        
+
         for (var i = 0; i < 2; i++)
         {
-            if (transform.GetChild(i).TryGetComponent(out Cube cube))
-            {
-                _gameManager.goalList.Add(cube);
+            random = Random.Range(0, cubeAmount.Count - 2);
+            random = cubeAmount[random];
+            cubeAmount.Remove(random);
             
-                random = Random.Range(0, cubeAmount.Count - 2);
-                random = cubeAmount[random];
-                cubeAmount.Remove(random);
-            
-                var goalName = "Goal" + i;
-                var goalCubeNo = PlayerPrefs.GetInt(goalName, random);
+            var goalName = "Goal" + i;
+            var goalCubeNo = PlayerPrefs.GetInt(goalName, random);
 
-                if (transform.GetChild(i).TryGetComponent(out Image image) &&
-                    _gameManager.cubes[goalCubeNo].TryGetComponent(out SpriteRenderer cubeImage))
-                {
-                    image.sprite = cubeImage.sprite;
-                    image.enabled = true;
-                }
-                PlayerPrefs.SetInt(goalName, goalCubeNo);
+            cube = Instantiate(_gameManager.cubes[goalCubeNo], transform);
+            if (transform.GetChild(i).TryGetComponent(out Image image) &&
+                _gameManager.cubes[goalCubeNo].TryGetComponent(out SpriteRenderer cubeImage))
+            {
+                image.sprite = cubeImage.sprite;
+                image.enabled = true;
             }
+
+            PlayerPrefs.SetInt(goalName, goalCubeNo);
+            
+            if (cube.TryGetComponent(out Cube cubeScript))
+                _gameManager.goalList.Add(cubeScript);
         }
-        
+
         SetGoalTexts();
     }
 
@@ -95,7 +96,7 @@ public class Goals : MonoBehaviour
         var nextRandom = Random.Range(0, _gameManager.cubes.Length - 2);
         if (nextRandom == random)
             return GetExcludedRandomValue();
-        
+
         return random;
     }
 
@@ -111,10 +112,10 @@ public class Goals : MonoBehaviour
                 PlayerPrefs.SetInt(goalName, goalCubeNo);
             }
         }
-        
+
         SetGoalTexts();
     }
-    
+
     private void CheckGoalForBalloon()
     {
         for (var i = 0; i < 2; i++)
@@ -127,7 +128,7 @@ public class Goals : MonoBehaviour
                 PlayerPrefs.SetInt(goalName, goalCubeNo);
             }
         }
-        
+
         SetGoalTexts();
     }
 }
