@@ -99,7 +99,7 @@ public class Cube : MonoBehaviour
 
     public void CreateGroup()
     {
-        group = Pool.Instance.SpawnObject(Vector3.zero, "Group", null);
+        group = Pool.Instance.SpawnObject(Vector3.zero, PoolItemType.Group, null);
         if (group != null)
         {
             group.SetActive(true);
@@ -144,13 +144,13 @@ public class Cube : MonoBehaviour
     {
         if (isBalloon)
         {
-            Pool.Instance.SpawnObject(transform.position, "BalloonParticle", null, 1f);
+            Pool.Instance.SpawnObject(transform.position, PoolItemType.BalloonPopExplosion, null, 1f);
             _manager.allCubes[column, row] = null;
             BalloonDestroyed?.Invoke();
         }
         else if (gameObject.CompareTag(_manager.goalList[goalNo].tag))
         {
-            Pool.Instance.SpawnObject(transform.position, "StarParticle", null, 1f);
+            Pool.Instance.SpawnObject(transform.position, PoolItemType.SmokeExplosionWhite, null, 1f);
             _manager.goalAmounts[goalNo]--;
             GoalAmountChanged?.Invoke();
         }
@@ -162,7 +162,7 @@ public class Cube : MonoBehaviour
     {
         if (_manager.allCubes[column, row] != null)
         {
-            Pool.Instance.SpawnObject(transform.position, "BalloonParticle", null, 1f);
+            Pool.Instance.SpawnObject(transform.position, PoolItemType.BalloonPopExplosion, null, 1f);
             _manager.allCubes[column, row] = null;
             DuckDestroyed?.Invoke();
             if (TryGetComponent(out SpriteRenderer renderer)) renderer.enabled = false;

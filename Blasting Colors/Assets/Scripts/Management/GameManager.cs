@@ -235,7 +235,7 @@ public class GameManager : MonoSingleton<GameManager>
             
             if (cube.isBalloon)
             {
-                Pool.Instance.SpawnObject(cube.transform.position, "BalloonParticle", null, 1f);
+                Pool.Instance.SpawnObject(cube.transform.position, PoolItemType.BalloonPopExplosion, null, 1f);
                 BalloonDestroyed?.Invoke();
             }
         }
@@ -284,7 +284,7 @@ public class GameManager : MonoSingleton<GameManager>
                     if (!cube.isRocket && !cube.isBalloon)
                     {
                         var particleName = cube.tag + "Rocks";
-                        Pool.Instance.SpawnObject(cube.transform.position, particleName, null, 1f);
+                        //Pool.Instance.SpawnObject(cube.transform.position, particleName, null, 1f);
                     }
                     
                     CubeDestroyed?.Invoke();
@@ -319,7 +319,7 @@ public class GameManager : MonoSingleton<GameManager>
         StartCoroutine(DestructionCheck(column, row));
         
         if (rocketCenter == null)
-            Pool.Instance.DeactivateObject(group);
+            Pool.Instance.DeactivateObject(group, PoolItemType.Group);
         else
         {
             rocketCenter = null;
