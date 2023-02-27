@@ -1,39 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine;
 
-public class Rocket : MonoBehaviour
+namespace Gameplay
 {
-    [SerializeField]private bool isRight;
-
-    public void Launch(bool isHorizontal)
+    public class Rocket : Cube
     {
-        var targetTime = 0f;
-        var targetDistance = 0f;
-        var target = transform.position;
-        
-        if (isHorizontal)
+        protected override void OnMouseUp()
         {
-            targetTime = GameManager.Instance.width * 0.24f;
-            targetDistance = GameManager.Instance.width * GameManager.Instance.offset * 2;
-
-            if (isRight)
-                target.x += targetDistance;
-            else
-                target.x -= targetDistance;
-            transform.DOMove(target, targetTime);
+            LaunchTheRocket();
         }
-        else
+        
+        protected virtual void LaunchTheRocket()
         {
-            targetTime = GameManager.Instance.height * 0.24f;
-            targetDistance = GameManager.Instance.height * GameManager.Instance.offset * 2;
-            
-            if (isRight)
-                target.y += targetDistance;
-            else
-                target.y -= targetDistance;
-            transform.DOMove(target, targetTime);
+            foreach (Transform child in transform.GetChild(0))
+            {
+                if (child.TryGetComponent(out RocketLaunch rocket)) rocket.Launch(cubeType);
+            }
+        
+            StartCoroutine(_manager.LaunchRocket(column, row, cubeType));
         }
     }
 }

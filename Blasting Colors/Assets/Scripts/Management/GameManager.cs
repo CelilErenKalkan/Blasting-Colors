@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Gameplay;
 using UnityEngine;
 using static Actions;
 using Random = UnityEngine.Random;
@@ -329,9 +330,9 @@ public class GameManager : MonoSingleton<GameManager>
         DecreaseRow();
     }
 
-    public IEnumerator LaunchRocket(int column, int row, bool isHorizontal) // Launch the rocket to destroy all cubes in the line.
+    public IEnumerator LaunchRocket(int column, int row, CubeType cubeType) // Launch the rocket to destroy all cubes in the line.
     {
-        if (isHorizontal)
+        if (cubeType == CubeType.HorizontalRocket)
         {
             for (var i = 1; i < width; i++)
             {
