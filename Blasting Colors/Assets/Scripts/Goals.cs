@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Gameplay;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,7 +12,7 @@ public class Goals : MonoBehaviour
 {
     private int random;
 
-    private GameManager manager;
+    private GameManager _gameManager;
     [SerializeField]private List<int> cubeAmount = new List<int>();
 
     private void Start()
@@ -43,28 +44,29 @@ public class Goals : MonoBehaviour
 
     private void SetGoals()
     {
-        manager = GameManager.Instance;
+        _gameManager = GameManager.Instance;
         
         for (var i = 0; i < 2; i++)
         {
-            manager.goalList.Add(transform.GetChild(i).gameObject);
-            
-            random = Random.Range(0, cubeAmount.Count - 2);
-            random = cubeAmount[random];
-            cubeAmount.Remove(random);
-            
-            var goalName = "Goal" + i;
-            var goalCubeNo = PlayerPrefs.GetInt(goalName, random);
-
-            transform.GetChild(i).tag = manager.cubes[goalCubeNo].tag;
-
-            if (transform.GetChild(i).TryGetComponent(out Image image) &&
-                manager.cubes[goalCubeNo].TryGetComponent(out SpriteRenderer cubeImage))
+            if (transform.GetChild(i).TryGetComponent(out Cube cube))
             {
-                image.sprite = cubeImage.sprite;
-                image.enabled = true;
+                _gameManager.goalList.Add(cube);
+            
+                random = Random.Range(0, cubeAmount.Count - 2);
+                random = cubeAmount[random];
+                cubeAmount.Remove(random);
+            
+                var goalName = "Goal" + i;
+                var goalCubeNo = PlayerPrefs.GetInt(goalName, random);
+
+                if (transform.GetChild(i).TryGetComponent(out Image image) &&
+                    _gameManager.cubes[goalCubeNo].TryGetComponent(out SpriteRenderer cubeImage))
+                {
+                    image.sprite = cubeImage.sprite;
+                    image.enabled = true;
+                }
+                PlayerPrefs.SetInt(goalName, goalCubeNo);
             }
-            PlayerPrefs.SetInt(goalName, goalCubeNo);
         }
         
         SetGoalTexts();
@@ -72,13 +74,13 @@ public class Goals : MonoBehaviour
 
     private void SetGoalTexts()
     {
-        var count = manager.goalAmounts.Count;
+        var count = _gameManager.goalAmounts.Count;
         for (var i = 0; i < count; i++)
         {
             if (transform.GetChild(i).GetChild(0).TryGetComponent(out TMP_Text text))
             {
-                if (manager.goalAmounts[i] > 0)
-                    text.text = manager.goalAmounts[i].ToString();
+                if (_gameManager.goalAmounts[i] > 0)
+                    text.text = _gameManager.goalAmounts[i].ToString();
                 else
                 {
                     transform.GetChild(i).GetChild(1).gameObject.SetActive(true);
@@ -90,7 +92,7 @@ public class Goals : MonoBehaviour
 
     private int GetExcludedRandomValue()
     {
-        var nextRandom = Random.Range(0, manager.cubes.Length - 2);
+        var nextRandom = Random.Range(0, _gameManager.cubes.Length - 2);
         if (nextRandom == random)
             return GetExcludedRandomValue();
         
@@ -101,9 +103,9 @@ public class Goals : MonoBehaviour
     {
         for (var i = 0; i < 2; i++)
         {
-            if (transform.GetChild(i).CompareTag("Duck"))
+            if (_gameManager.goalList[i].cubeType == CubeType.Duck)
             {
-                manager.goalAmounts[i]--;
+                _gameManager.goalAmounts[i]--;
                 var goalName = "Goal" + i;
                 var goalCubeNo = PlayerPrefs.GetInt(goalName, random);
                 PlayerPrefs.SetInt(goalName, goalCubeNo);
@@ -117,9 +119,9 @@ public class Goals : MonoBehaviour
     {
         for (var i = 0; i < 2; i++)
         {
-            if (transform.GetChild(i).CompareTag("Balloon"))
+            if (_gameManager.goalList[i].cubeType == CubeType.Duck)
             {
-                manager.goalAmounts[i]--;
+                _gameManager.goalAmounts[i]--;
                 var goalName = "Goal" + i;
                 var goalCubeNo = PlayerPrefs.GetInt(goalName, random);
                 PlayerPrefs.SetInt(goalName, goalCubeNo);

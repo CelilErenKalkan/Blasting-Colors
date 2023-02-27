@@ -12,7 +12,7 @@ public class GameManager : MonoSingleton<GameManager>
     [HideInInspector] public int height;
     [HideInInspector] public float offset;
     [HideInInspector] public bool isPlayable;
-    [HideInInspector] public List<GameObject> goalList = new List<GameObject>();
+    [HideInInspector] public List<Cube> goalList = new List<Cube>();
     [HideInInspector]public Transform rocketCenter;
 
     public int moves = 30;
@@ -119,9 +119,7 @@ public class GameManager : MonoSingleton<GameManager>
             {
                 for (var j = 0; j < height; j++)
                 {
-                    var cube = allCubes[i, j];
-                    allCubes[i, j] = null;
-                    Destroy(cube);
+                    if (allCubes[i, j].TryGetComponent(out Cube cube)) cube.Destroy();
                 }
             }
 
@@ -131,9 +129,9 @@ public class GameManager : MonoSingleton<GameManager>
 
     private void Grouping() // Resets all the groups.
     {
-        for (int i = 0; i < width; i++)
+        for (var i = 0; i < width; i++)
         {
-            for (int j = 0; j < height; j++)
+            for (var j = 0; j < height; j++)
             {
                 if (allCubes[i, j] != null)
                 {
@@ -168,7 +166,7 @@ public class GameManager : MonoSingleton<GameManager>
             {
                 if (allCubes[i, j] != null && allCubes[i, j].TryGetComponent(out Cube cube))
                 {
-                    if (!cube.isBalloon && !cube.isDuck)
+                    if (cube.cubeType != CubeType.Balloon && cube.cubeType != CubeType.Duck)
                     {
                         //Checking Left.
                         if (i > 0)
@@ -209,10 +207,10 @@ public class GameManager : MonoSingleton<GameManager>
         for (var column = 0; column < width; column++)
         {
             if (allCubes[column, 0].TryGetComponent(out Cube cube))
-                if (cube.isDuck)
+                if (cube.cubeType == CubeType.Duck)
                 {
                     duckDestroyed = true;
-                    cube.DestroyDuck();
+                    cube.Destroy();
                 }
         }
         if (duckDestroyed)
@@ -227,23 +225,6 @@ public class GameManager : MonoSingleton<GameManager>
     #endregion
 
     #region Destroying Cubes
-
-    private void DestroyCubesAt(int column, int row) // Destroys the selected cube.
-    {
-        if (allCubes[column, row].TryGetComponent(out Cube cube))
-        {
-            cube.isDestroyed = true;
-            
-            if (cube.isBalloon)
-            {
-                Pool.Instance.SpawnObject(cube.transform.position, PoolItemType.BalloonPopExplosion, null, 1f);
-                BalloonDestroyed?.Invoke();
-            }
-        }
-
-        Destroy(allCubes[column, row]);
-        allCubes[column, row] = null;
-    }
 
     private IEnumerator DestructionCheck(int column, int row)
     {
@@ -274,22 +255,22 @@ public class GameManager : MonoSingleton<GameManager>
                     cube.JoinToTheRocket();
                     allCubes[column, row] = null;
                 }
-                else if (cube.isDuck)
+                else if (cube.cubeType == CubeType.Duck)
                 {
-                    DestroyCubesAt(column, row);
+                    cube.Destroy();
                 }
                 else
                 {
                     CheckForBalloon(column, row);
                     
-                    if (!cube.isRocket && !cube.isBalloon)
+                    if (cube.cubeType != CubeType.HorizontalRocket && cube.cubeType != CubeType.VerticalRocket && cube.cubeType != CubeType.Balloon)
                     {
                         var particleName = cube.tag + "Rocks";
                         //Pool.Instance.SpawnObject(cube.transform.position, particleName, null, 1f);
                     }
                     
                     CubeDestroyed?.Invoke();
-                    DestroyCubesAt(column, row);
+                    cube.Destroy();
                 }
             }
             else
@@ -384,36 +365,36 @@ public class GameManager : MonoSingleton<GameManager>
         if (column + 1 < width && allCubes[column + 1, row] != null &&
             allCubes[column + 1, row].TryGetComponent(out Cube rightCube))
         {
-            if (rightCube.isBalloon)
+            if (rightCube.cubeType == CubeType.Balloon)
             {
-                DestroyCubesAt(column + 1, row);
+                rightCube.Destroy();
             }
         }
 
         if (column - 1 >= 0 && allCubes[column - 1, row] != null &&
             allCubes[column - 1, row].TryGetComponent(out Cube leftCube))
         {
-            if (leftCube.isBalloon)
+            if (leftCube.cubeType == CubeType.Balloon)
             {
-                DestroyCubesAt(column - 1, row);
+                leftCube.Destroy();
             }
         }
 
         if (row + 1 < height && allCubes[column, row + 1] != null &&
             allCubes[column, row + 1].TryGetComponent(out Cube upperCube))
         {
-            if (upperCube.isBalloon)
+            if (upperCube.cubeType == CubeType.Balloon)
             {
-                DestroyCubesAt(column, row + 1);
+                upperCube.Destroy();
             }
         }
 
         if (row - 1 >= 0 && allCubes[column, row - 1] != null &&
             allCubes[column, row - 1].TryGetComponent(out Cube downCube))
         {
-            if (downCube.isBalloon)
+            if (downCube.cubeType == CubeType.Balloon)
             {
-                DestroyCubesAt(column, row - 1);
+                downCube.Destroy();
             }
         }
     }

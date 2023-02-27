@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 58247989844886969}
   - component: {fileID: 650621014115693751}
-  - component: {fileID: 3400861138398611395}
   - component: {fileID: 5545851692674632758}
   - component: {fileID: 5783535167680591778}
+  - component: {fileID: -2465771695755675339}
   m_Layer: 0
   m_Name: Balloon
   m_TagString: Balloon
@@ -85,23 +85,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3400861138398611395
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7949424921106412337}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b37c65bb9fc9364c9fc86651abe2fa7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  column: 0
-  row: 0
-  group: {fileID: 0}
-  isBalloon: 1
-  isDuck: 0
 --- !u!61 &5545851692674632758
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -147,3 +130,20 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &-2465771695755675339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7949424921106412337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 548582dc6bc23aa47b94c33ab2a667a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  column: 0
+  row: 0
+  group: {fileID: 0}
+  isDestroyed: 0
+  cubeType: 5

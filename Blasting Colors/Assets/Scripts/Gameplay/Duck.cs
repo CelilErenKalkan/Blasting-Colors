@@ -1,4 +1,5 @@
 using UnityEngine;
+using static Actions;
 
 namespace Gameplay
 {
@@ -10,17 +11,29 @@ namespace Gameplay
             if (row != 0) return;
             
             isDestroyed = true;
-            _manager.isPlayable = false;
+            _gameManager.isPlayable = false;
         }
         
         protected override void OnMouseUp()
         {
-            if (_manager.isPlayable)
+            if (_gameManager.isPlayable)
             {
-                _manager.isPlayable = false;
+                _gameManager.isPlayable = false;
                 if (TryGetComponent(out Animator animator)) animator.SetTrigger("isWrong");
-                _manager.moves++;
-                _manager.moves--;
+                _gameManager.moves++;
+                _gameManager.moves--;
+            }
+        }
+
+        public new void Destroy()
+        {
+            if (_gameManager.allCubes[column, row] != null)
+            {
+                Pool.Instance.SpawnObject(transform.position, PoolItemType.BalloonPopExplosion, null, 1f);
+                _gameManager.allCubes[column, row] = null;
+                DuckDestroyed?.Invoke();
+                if (TryGetComponent(out SpriteRenderer renderer)) renderer.enabled = false;
+                Destroy(gameObject);
             }
         }
     }

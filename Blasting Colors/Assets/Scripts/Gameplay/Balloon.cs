@@ -7,22 +7,28 @@ namespace Gameplay
     {
         protected override void OnMouseUp()
         {
-            if (_manager.isPlayable)
+            if (_gameManager.isPlayable)
             {
-                _manager.isPlayable = false;
+                _gameManager.isPlayable = false;
                 if (TryGetComponent(out Animator animator)) animator.SetTrigger("isWrong");
-                _manager.moves++;
-                _manager.moves--;
+                _gameManager.moves++;
+                _gameManager.moves--;
             }
         }
 
         protected override void DestroyThisCube()
         {
             Pool.Instance.SpawnObject(transform.position, PoolItemType.BalloonPopExplosion, null, 1f);
-            _manager.allCubes[column, row] = null;
+            _gameManager.allCubes[column, row] = null;
             BalloonDestroyed?.Invoke();
             
             Destroy(gameObject);
+        }
+
+        public new void Destroy()
+        {
+            Pool.Instance.SpawnObject(transform.position, PoolItemType.BalloonPopExplosion, null, 1f);
+            BalloonDestroyed?.Invoke();
         }
     }
 }

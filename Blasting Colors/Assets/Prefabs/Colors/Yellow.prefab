@@ -100,6 +100,8 @@ MonoBehaviour:
   column: 0
   row: 0
   group: {fileID: 0}
+  isDestroyed: 0
+  cubeType: 4
 --- !u!61 &5545851692674632758
 BoxCollider2D:
   m_ObjectHideFlags: 0

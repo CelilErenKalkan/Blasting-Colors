@@ -16,7 +16,7 @@ namespace Gameplay
                 if (child.TryGetComponent(out RocketLaunch rocket)) rocket.Launch(cubeType);
             }
         
-            StartCoroutine(_manager.LaunchRocket(column, row, cubeType));
+            StartCoroutine(_gameManager.LaunchRocket(column, row, cubeType));
         }
     }
 }
