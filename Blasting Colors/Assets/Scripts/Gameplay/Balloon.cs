@@ -1,3 +1,4 @@
+using Management;
 using UnityEngine;
 using static Actions;
 
@@ -7,28 +8,21 @@ namespace Gameplay
     {
         protected override void OnMouseUp()
         {
-            if (_gameManager.isPlayable)
-            {
-                _gameManager.isPlayable = false;
-                if (TryGetComponent(out Animator animator)) animator.SetTrigger("isWrong");
-                _gameManager.moves++;
-                _gameManager.moves--;
-            }
+            if (!_gameManager.isPlayable) return;
+            
+            _gameManager.isPlayable = false;
+            if (TryGetComponent(out Animator animator)) animator.SetTrigger("isWrong");
+            _gameManager.moves++;
+            _gameManager.moves--;
         }
 
-        protected override void DestroyThisCube()
+        public override void DestroyThis()
         {
-            Pool.Instance.SpawnObject(transform.position, PoolItemType.BalloonPopExplosion, null, 1f);
+            Pool.Instance.SpawnObject(transform.position, PoolItemType.BalloonPop, null, 1f);
             _gameManager.allCubes[column, row] = null;
             BalloonDestroyed?.Invoke();
             
             Destroy(gameObject);
-        }
-
-        public new void Destroy()
-        {
-            Pool.Instance.SpawnObject(transform.position, PoolItemType.BalloonPopExplosion, null, 1f);
-            BalloonDestroyed?.Invoke();
         }
     }
 }

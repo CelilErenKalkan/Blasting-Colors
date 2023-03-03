@@ -1433,54 +1433,56 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pooledItems:
-  - prefabs:
+  - poolName: BalloonPop
+    prefabs:
     - {fileID: 193104, guid: c2f28a236b0696a4f90a994422019577, type: 3}
     amount: 0
     expandable: 1
     poolItemType: 0
     parent: {fileID: 0}
-  - prefabs:
+  - poolName: Star
+    prefabs:
     - {fileID: 164832, guid: cc4edba986607ba48b17927b27d25e4e, type: 3}
     amount: 0
     expandable: 1
     poolItemType: 1
     parent: {fileID: 0}
-  - prefabs:
+  - poolName: BlueRocks
+    prefabs:
     - {fileID: 188560, guid: 53dca11b00d9ced43b7dafbef02017f2, type: 3}
     amount: 0
     expandable: 1
     poolItemType: 2
     parent: {fileID: 0}
-  - prefabs:
+  - poolName: GreenRocks
+    prefabs:
     - {fileID: 188560, guid: 7595617803d5fbc44b98bb8de242a6c1, type: 3}
     amount: 0
     expandable: 1
     poolItemType: 3
     parent: {fileID: 0}
-  - prefabs:
+  - poolName: PurpleRocks
+    prefabs:
     - {fileID: 188560, guid: 9b2e2a514754a0d4c95f4b98441fef53, type: 3}
     amount: 0
     expandable: 1
     poolItemType: 4
     parent: {fileID: 0}
-  - prefabs:
+  - poolName: RedRocks
+    prefabs:
     - {fileID: 188560, guid: f10cab52846d65c43a8eb73393402957, type: 3}
     amount: 0
     expandable: 1
     poolItemType: 5
     parent: {fileID: 0}
-  - prefabs:
+  - poolName: YellowRocks
+    prefabs:
     - {fileID: 188560, guid: fd9c4b8f5cd75e1438ac199c8bce3274, type: 3}
     amount: 0
     expandable: 1
     poolItemType: 6
     parent: {fileID: 0}
-  - prefabs:
-    - {fileID: 7250489366450604670, guid: a2bcb30a29b34df4eada975fb30ae5ba, type: 3}
-    amount: 0
-    expandable: 1
-    poolItemType: 7
-    parent: {fileID: 0}
+  dynamicPooledItems: []
   poolObjects: []
 --- !u!4 &935568470
 Transform:

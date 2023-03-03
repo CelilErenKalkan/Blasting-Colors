@@ -66,7 +66,6 @@
      <Compile Include="Assets\Demigiant\DOTweenPro\DOTweenAnimation.cs" />
      <Compile Include="Assets\Demigiant\DOTweenPro\DOTweenTk2d.cs" />
      <Compile Include="Assets\Scripts\Screen Adjustment\AnchorGameObject.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Grouping.cs" />
      <Compile Include="Assets\Scripts\Screen Adjustment\ScaleToFitScreen.cs" />
      <Compile Include="Assets\Scripts\BalloonAudioSource.cs" />
      <Compile Include="Assets\Scripts\Gameplay\RocketLaunch.cs" />

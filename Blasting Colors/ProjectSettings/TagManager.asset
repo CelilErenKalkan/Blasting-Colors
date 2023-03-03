@@ -3,26 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - Blue
-  - Green
-  - Pink
-  - Purple
-  - Red
-  - Yellow
-  - Group
-  - StarParticle
-  - BalloonParticle
-  - CubeParticle
-  - Duck
-  - Balloon
-  - DuckExplosion
-  - BlueRocks
-  - RedRocks
-  - GreenRocks
-  - PurpleRocks
-  - YellowRocks
-  - Rocket
+  tags: []
   layers:
   - Default
   - TransparentFX

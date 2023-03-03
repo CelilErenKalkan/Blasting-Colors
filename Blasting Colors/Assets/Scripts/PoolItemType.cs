@@ -1,11 +1,10 @@
 public enum PoolItemType
 {
-	BalloonPopExplosion = 0,
-	StarExplosion = 1,
+	BalloonPop = 0,
+	Star = 1,
 	BlueRocks = 2,
 	GreenRocks = 3,
 	PurpleRocks = 4,
 	RedRocks = 5,
 	YellowRocks = 6,
-	Group = 7,
 }

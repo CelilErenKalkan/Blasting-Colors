@@ -1,4 +1,7 @@
-﻿using DG.Tweening;
+﻿using System.Collections;
+using System.Collections.Generic;
+using DG.Tweening;
+using Management;
 using UnityEngine;
 using static Actions;
 using Random = UnityEngine.Random;
@@ -17,39 +20,290 @@ namespace Gameplay
         HorizontalRocket,
         VerticalRocket
     }
-    
+
     public class Cube : MonoBehaviour
     {
-        [HideInInspector]public int column;
-        [HideInInspector]public int row;
-        [HideInInspector]public GameObject group;
+        [HideInInspector] public int column;
+        [HideInInspector] public int row;
         protected Vector2 tempPos;
         protected SpriteRenderer spriteRenderer;
         protected int goalNo;
         protected GameManager _gameManager;
+        public List<Cube> groupList = new List<Cube>();
 
-        [HideInInspector]public bool isDestroyed;
+        [HideInInspector] public bool isDestroyed;
+        protected bool _isOnce, _isClicked;
         public CubeType cubeType;
 
-        private void Start()
+        #region GROUP
+
+        public bool HasGroup() => groupList.Count > 0;
+
+        public void ChangeGroup(List<Cube> newList, Cube invoter)
         {
-            _gameManager = GameManager.Instance;
-            OnTurnEnded();
+            for (var i = 0; i < newList.Count; i++)
+            {
+                if (!groupList.Contains(newList[i]))
+                    groupList.Add(newList[i]);
+            }
+
+            groupList.Add(invoter);
+            groupList.Remove(this);
         }
 
-        protected virtual void OnEnable()
+        public void CheckGroup()
         {
-            TurnEnded += OnTurnEnded;
+            //Checking Left.
+            if (column > 0)
+            {
+                if (_gameManager.allCubes[column - 1, row] != null)
+                {
+                    if (cubeType == _gameManager.allCubes[column - 1, row].cubeType)
+                    {
+                        ChangeGroup(_gameManager.allCubes[column - 1, row].groupList, this);
+                        groupList.Add(_gameManager.allCubes[column - 1, row]);
+                    }
+                }
+            }
+
+            //Checking Down.
+            if (row > 0)
+            {
+                if (_gameManager.allCubes[column, row - 1] != null)
+                {
+                    if (cubeType == _gameManager.allCubes[column, row - 1].cubeType)
+                    {
+                        ChangeGroup(_gameManager.allCubes[column, row - 1].groupList, this);
+                        groupList.Add(_gameManager.allCubes[column, row - 1]);
+                    }
+                }
+            }
+
+            for (var i = 0; i < groupList.Count; i++)
+            {
+                groupList[i].ChangeGroup(groupList, this);
+            }
+
+            groupList.Remove(this);
         }
-    
-        protected virtual void OnDisable()
+
+        public void ChangeSortingOrder(int order)
         {
-            TurnEnded -= OnTurnEnded;
+            spriteRenderer.sortingOrder = order;
+        }
+
+        #endregion
+
+        #region MOVE
+
+        public virtual void DestroyThis()
+        {
+            if (_gameManager.goalList[goalNo].cubeType == cubeType)
+            {
+                Pool.Instance.SpawnObject(transform.position, PoolItemType.Star, null, 1f);
+                _gameManager.goalAmounts[goalNo]--;
+                GoalAmountChanged?.Invoke();
+            }
+
+            isDestroyed = true;
+            _gameManager.allCubes[column, row] = null;
+            Destroy(gameObject);
+        }
+
+        public virtual void JumpToGoal()
+        {
+            ChangeSortingOrder(21);
+            isDestroyed = true;
+
+            var goalPosition = _gameManager.goalList[goalNo].transform.position;
+            transform.DOJump(goalPosition, -5, 1, 1).OnComplete(DestroyThis);
+        }
+
+        # region ROCKET
+
+        public virtual void JoinToTheRocket()
+        {
+            ChangeSortingOrder(21);
+            isDestroyed = true;
+
+            var targetPosition = _gameManager.rocketCenter.position;
+            transform.DOMove(targetPosition, 0.5f).SetEase(Ease.InBack).OnComplete(DestroyThis);
+        }
+
+        protected virtual void SetRocket()
+        {
+            var randomRocket = Random.Range(1, 3);
+            var rocket = Instantiate(_gameManager.cubes[_gameManager.cubes.Length - randomRocket]);
+            rocket.SetActive(false);
+            rocket.transform.position = transform.position;
+            _gameManager.rocketCenter = rocket.transform;
+            if (rocket.TryGetComponent(out Rocket rocketScript))
+            {
+                _gameManager.allCubes[column, row] = rocketScript;
+                rocketScript.column = column;
+                rocketScript.row = row;
+            }
+            
+            var order = spriteRenderer.sortingOrder;
+            foreach (Transform child in rocket.transform)
+            {
+                if (child.TryGetComponent(out SpriteRenderer renderer)) renderer.sortingOrder = order;
+            }
+
+            var targetScale = new Vector3(0.1f, 0.1f, 0.1f);
+            transform.DOScale(targetScale, 0.6f).SetEase(Ease.InBack).OnComplete(() =>
+            {
+                rocket.SetActive(true);
+                DestroyThis();
+            });
+        }
+
+        #endregion
+
+        public void CheckForBalloon()
+        {
+            if (column + 1 < _gameManager.width && _gameManager.allCubes[column + 1, row] != null &&
+                _gameManager.allCubes[column + 1, row].TryGetComponent(out Balloon rightBalloon))
+            {
+                rightBalloon.DestroyThis();
+            }
+
+            if (column - 1 >= 0 && _gameManager.allCubes[column - 1, row] != null &&
+                _gameManager.allCubes[column - 1, row].TryGetComponent(out Balloon leftBalloon))
+            {
+                leftBalloon.DestroyThis();
+            }
+
+            if (row + 1 < _gameManager.height && _gameManager.allCubes[column, row + 1] != null &&
+                _gameManager.allCubes[column, row + 1].TryGetComponent(out Balloon upperBalloon))
+            {
+                upperBalloon.DestroyThis();
+            }
+
+            if (row - 1 >= 0 && _gameManager.allCubes[column, row - 1] != null &&
+                _gameManager.allCubes[column, row - 1].TryGetComponent(out Balloon downBalloon))
+            {
+                downBalloon.DestroyThis();
+            }
+        }
+
+        public void DestructionCheck()
+        {
+            if (isDestroyed) return;
+            if (cubeType == _gameManager.goalList[0].cubeType && _gameManager.goalAmounts[0] > 0)
+            {
+                CheckForBalloon();
+                goalNo = 0;
+                JumpToGoal();
+                _gameManager.allCubes[column, row] = null;
+            }
+            else if (cubeType == _gameManager.goalList[1].cubeType && _gameManager.goalAmounts[1] > 0)
+            {
+                CheckForBalloon();
+                goalNo = 1;
+                JumpToGoal();
+                _gameManager.allCubes[column, row] = null;
+            }
+            else if (_gameManager.rocketCenter != transform)
+            {
+                if (_gameManager.rocketCenter != null)
+                {
+                    CubeDestroyed?.Invoke();
+                    JoinToTheRocket();
+                    _gameManager.allCubes[column, row] = null;
+                }
+                else
+                {
+                    CheckForBalloon();
+
+                    if (cubeType != CubeType.HorizontalRocket && cubeType != CubeType.VerticalRocket &&
+                        cubeType != CubeType.Balloon)
+                    {
+                        //var particleName = tag + "Rocks";
+                        //Pool.Instance.SpawnObject(cube.transform.position, particleName, null, 1f);
+                    }
+
+                    CubeDestroyed?.Invoke();
+                    DestroyThis();
+                }
+            }
+            else
+            {
+                CheckForBalloon();
+            }
+        }
+
+        protected virtual IEnumerator DestroyGroup() // Destroy all the cubes in the selected cube.
+        {
+            for (var i = 0; i < groupList.Count; i++)
+            {
+                if (groupList[i] != this)
+                {
+                    groupList[i].DestructionCheck();
+                }
+            }
+
+
+            yield return new WaitForSeconds(0.05f);
+            DestructionCheck();
+
+            if (_gameManager.rocketCenter != null)
+            {
+                _gameManager.rocketCenter = null;
+                yield return new WaitForSeconds(0.5f);
+            }
+
+            if (_isClicked)
+                _gameManager.DecreaseRow();
+        }
+
+        #endregion
+
+        public void SetIsPlayable()
+        {
+            _gameManager.isPlayable = true;
+        }
+
+        protected virtual void OnMouseUp()
+        {
+            if (!_gameManager.isPlayable) return;
+            
+            _gameManager.isPlayable = false;
+            _isClicked = true;
+
+            if (groupList.Count <= 0)
+            {
+                if (TryGetComponent(out Animator animator)) animator.SetTrigger("isWrong");
+                _gameManager.moves++;
+                _isClicked = false;
+            }
+            else
+            {
+                var isGoal = false;
+                foreach (var goal in _gameManager.goalList)
+                {
+                    if (cubeType == goal.cubeType)
+                    {
+                        isGoal = true;
+                        break;
+                    }
+                }
+
+                if (groupList.Count >= 5 && !isGoal)
+                {
+                    SetRocket();
+                }
+
+                StartCoroutine(DestroyGroup());
+            }
+
+            _gameManager.moves--;
         }
 
         protected virtual void OnTurnEnded()
         {
             if (isDestroyed) return;
+            groupList.Clear();
             tempPos = _gameManager.matrixTransforms[column, row];
             transform.DOMove(tempPos, 0.5f).SetEase(Ease.OutBounce).OnComplete(SetCube);
             if (TryGetComponent(out SpriteRenderer renderer)) renderer.sortingOrder = row;
@@ -57,117 +311,24 @@ namespace Gameplay
 
         protected virtual void SetCube()
         {
-            transform.position = tempPos;
-            _gameManager.allCubes[column, row] = gameObject;
+            _gameManager.allCubes[column, row] = this;
         }
 
-        protected virtual void OnMouseUp()
+        private void Start()
         {
-            if (_gameManager.isPlayable)
-            {
-                _gameManager.isPlayable = false; 
-                if (transform.parent.childCount <= 1)
-                {
-                    if (TryGetComponent(out Animator animator)) animator.SetTrigger("isWrong");
-                    _gameManager.moves++;
-                }
-                else
-                {
-                    var isGoal = false;
-                    foreach (var goal in _gameManager.goalList)
-                    {
-                        if (cubeType == goal.cubeType)
-                        {
-                            isGoal = true;
-                            break;
-                        }
-                    }
-
-                    if (group.transform.childCount >= 5 && !isGoal)
-                    {
-                        _gameManager.rocketCenter = transform;
-                        var targetScale = new Vector3(0.1f, 0.1f, 0.1f);
-                        transform.DOScale(targetScale, 0.4f).SetEase(Ease.InBack).OnComplete(SetRocket);
-                    }
-                
-                    StartCoroutine(_gameManager.DestroyCubes(column, row, group));
-                }
-            
-                _gameManager.moves--;
-            }
+            _gameManager = GameManager.Instance;
+            if (TryGetComponent(out SpriteRenderer renderer)) spriteRenderer = renderer;
+            OnTurnEnded();
         }
 
-        public void CreateGroup()
+        protected virtual void OnEnable()
         {
-            group = Pool.Instance.SpawnObject(Vector3.zero, PoolItemType.Group, null);
-            if (group != null)
-            {
-                group.SetActive(true);
-                transform.SetParent(group.transform);
-            }
+            TurnEnded += OnTurnEnded;
         }
 
-        public void JumpToGoal(int goalNo)
+        protected virtual void OnDisable()
         {
-            this.goalNo = goalNo;
-            if (TryGetComponent(out SpriteRenderer spriteRenderer))
-                spriteRenderer.sortingOrder = 21;
-            transform.SetParent(null);
-            isDestroyed = true;
-
-            var goalPosition = _gameManager.goalList[goalNo].transform.position;
-            transform.DOJump(goalPosition, -5, 1, 1).OnComplete(DestroyThisCube);
-        }
-
-        public void JoinToTheRocket()
-        {
-            if (TryGetComponent(out SpriteRenderer spriteRenderer))
-                spriteRenderer.sortingOrder = 21;
-            transform.SetParent(null);
-            isDestroyed = true;
-
-            var targetPosition = _gameManager.rocketCenter.position;
-            transform.DOMove(targetPosition, 0.5f).SetEase(Ease.InBack).OnComplete(DestroyThisCube);
-        }
-
-        protected virtual void DestroyThisCube()
-        {
-            if (_gameManager.goalList[goalNo].cubeType == cubeType)
-            {
-                Pool.Instance.SpawnObject(transform.position, PoolItemType.StarExplosion, null, 1f);
-                _gameManager.goalAmounts[goalNo]--;
-                GoalAmountChanged?.Invoke();
-            }
-
-            Destroy();
-        }
-
-        public void Destroy()
-        {
-            isDestroyed = true;
-            _gameManager.allCubes[column, row] = null;
-            Destroy(gameObject);
-        }
-
-        protected virtual void SetRocket()
-        {
-            var randomRocket = Random.Range(1, 3);
-            var rocket = Instantiate(_gameManager.cubes[_gameManager.cubes.Length - randomRocket], transform, false);
-            rocket.transform.position = transform.position;
-            if (TryGetComponent(out SpriteRenderer spriteRenderer))
-            {
-                var order = spriteRenderer.sortingOrder;
-                spriteRenderer.enabled = false;
-                foreach (Transform child in transform.GetChild(0))
-                {
-                    if (child.TryGetComponent(out SpriteRenderer renderer)) renderer.sortingOrder = order;
-                }
-            }
-        }
-
-        public void SetIsPlayable()
-        {
-            _gameManager.isPlayable = true;
+            TurnEnded -= OnTurnEnded;
         }
     }
 }
