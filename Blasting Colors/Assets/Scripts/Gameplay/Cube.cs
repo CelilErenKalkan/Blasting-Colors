@@ -39,6 +39,25 @@ namespace Gameplay
 
         public bool HasGroup() => groupList.Count > 0;
 
+        public bool CanTurnIntoRocket() => groupList.Count >= 5;
+
+        public bool IsGoal()
+        {
+            if (cubeType == _gameManager.goalList[0].cubeType && _gameManager.goalAmounts[0] > 0)
+            {
+                goalNo = 0;
+                return true;
+            }
+
+            if (cubeType == _gameManager.goalList[1].cubeType && _gameManager.goalAmounts[1] > 0)
+            {
+                goalNo = 1;
+                return true;
+            }
+
+            return false;
+        }
+
         public void ChangeGroup(List<Cube> newList, Cube invoter)
         {
             for (var i = 0; i < newList.Count; i++)
@@ -104,9 +123,8 @@ namespace Gameplay
                 _gameManager.goalAmounts[goalNo]--;
                 GoalAmountChanged?.Invoke();
             }
-
             isDestroyed = true;
-            _gameManager.allCubes[column, row] = null;
+
             Destroy(gameObject);
         }
 
@@ -116,44 +134,58 @@ namespace Gameplay
             isDestroyed = true;
 
             var goalPosition = _gameManager.goalList[goalNo].transform.position;
-            transform.DOJump(goalPosition, -5, 1, 1).OnComplete(DestroyThis);
+            transform.DOJump(goalPosition, -5, 1, 1.0f).OnComplete(DestroyThis);
         }
 
         # region ROCKET
 
-        public virtual void JoinToTheRocket()
-        {
-            ChangeSortingOrder(21);
-            isDestroyed = true;
-
-            var targetPosition = _gameManager.rocketCenter.position;
-            transform.DOMove(targetPosition, 0.5f).SetEase(Ease.InBack).OnComplete(DestroyThis);
-        }
-
-        protected virtual void SetRocket()
+        protected virtual Rocket TurnIntoARocket()
         {
             var randomRocket = Random.Range(1, 3);
             var rocket = Instantiate(_gameManager.cubes[_gameManager.cubes.Length - randomRocket]);
-            rocket.SetActive(false);
             rocket.transform.position = transform.position;
-            _gameManager.rocketCenter = rocket.transform;
             if (rocket.TryGetComponent(out Rocket rocketScript))
             {
                 _gameManager.allCubes[column, row] = rocketScript;
                 rocketScript.column = column;
                 rocketScript.row = row;
             }
-            
+
             var order = spriteRenderer.sortingOrder;
             foreach (Transform child in rocket.transform)
             {
                 if (child.TryGetComponent(out SpriteRenderer renderer)) renderer.sortingOrder = order;
             }
 
-            var targetScale = new Vector3(0.1f, 0.1f, 0.1f);
-            transform.DOScale(targetScale, 0.6f).SetEase(Ease.InBack).OnComplete(() =>
+            return rocketScript;
+        }
+
+        public virtual void JoinToTheRocket(Vector3 targetPosition)
+        {
+            CubeDestroyed?.Invoke();
+            _gameManager.allCubes[column, row] = null;
+            ChangeSortingOrder(21);
+            isDestroyed = true;
+            transform.DOMove(targetPosition, 0.5f).SetEase(Ease.InBack).OnComplete(DestroyThis);
+        }
+
+        protected virtual IEnumerator SetRocket()
+        {
+            var rocket = TurnIntoARocket();
+
+            for (var i = 0; i < groupList.Count; i++)
             {
-                rocket.SetActive(true);
+                if (groupList[i] != this)
+                {
+                    groupList[i].JoinToTheRocket(rocket.transform.position);
+                }
+            }
+            
+            yield return new WaitForSeconds(0.05f);
+            var targetScale = new Vector3(0.1f, 0.1f, 0.1f);
+            transform.DOScale(targetScale, 0.5f).SetEase(Ease.InBack).OnComplete(() =>
+            {
+                rocket.ActivateRocket();
                 DestroyThis();
             });
         }
@@ -190,46 +222,31 @@ namespace Gameplay
         public void DestructionCheck()
         {
             if (isDestroyed) return;
-            if (cubeType == _gameManager.goalList[0].cubeType && _gameManager.goalAmounts[0] > 0)
+            
+            _gameManager.allCubes[column, row] = null;
+            CheckForBalloon();
+            
+            if (IsGoal())
             {
-                CheckForBalloon();
-                goalNo = 0;
                 JumpToGoal();
-                _gameManager.allCubes[column, row] = null;
-            }
-            else if (cubeType == _gameManager.goalList[1].cubeType && _gameManager.goalAmounts[1] > 0)
-            {
-                CheckForBalloon();
-                goalNo = 1;
-                JumpToGoal();
-                _gameManager.allCubes[column, row] = null;
-            }
-            else if (_gameManager.rocketCenter != transform)
-            {
-                if (_gameManager.rocketCenter != null)
-                {
-                    CubeDestroyed?.Invoke();
-                    JoinToTheRocket();
-                    _gameManager.allCubes[column, row] = null;
-                }
-                else
-                {
-                    CheckForBalloon();
-
-                    if (cubeType != CubeType.HorizontalRocket && cubeType != CubeType.VerticalRocket &&
-                        cubeType != CubeType.Balloon)
-                    {
-                        //var particleName = tag + "Rocks";
-                        //Pool.Instance.SpawnObject(cube.transform.position, particleName, null, 1f);
-                    }
-
-                    CubeDestroyed?.Invoke();
-                    DestroyThis();
-                }
+                
+                if (_isClicked)
+                    _gameManager.DecreaseRow();
             }
             else
             {
-                CheckForBalloon();
+                if (cubeType != CubeType.HorizontalRocket && cubeType != CubeType.VerticalRocket &&
+                    cubeType != CubeType.Balloon)
+                {
+                    //var particleName = tag + "Rocks";
+                    //Pool.Instance.SpawnObject(cube.transform.position, particleName, null, 1f);
+                }
+
+                CubeDestroyed?.Invoke();
+                DestroyThis();
+                
+                if (_isClicked)
+                    _gameManager.DecreaseRow();
             }
         }
 
@@ -246,15 +263,6 @@ namespace Gameplay
 
             yield return new WaitForSeconds(0.05f);
             DestructionCheck();
-
-            if (_gameManager.rocketCenter != null)
-            {
-                _gameManager.rocketCenter = null;
-                yield return new WaitForSeconds(0.5f);
-            }
-
-            if (_isClicked)
-                _gameManager.DecreaseRow();
         }
 
         #endregion
@@ -267,7 +275,7 @@ namespace Gameplay
         protected virtual void OnMouseUp()
         {
             if (!_gameManager.isPlayable) return;
-            
+
             _gameManager.isPlayable = false;
             _isClicked = true;
 
@@ -279,22 +287,14 @@ namespace Gameplay
             }
             else
             {
-                var isGoal = false;
-                foreach (var goal in _gameManager.goalList)
+                if (CanTurnIntoRocket() && !IsGoal())
                 {
-                    if (cubeType == goal.cubeType)
-                    {
-                        isGoal = true;
-                        break;
-                    }
+                    StartCoroutine(SetRocket());
                 }
-
-                if (groupList.Count >= 5 && !isGoal)
+                else
                 {
-                    SetRocket();
+                    StartCoroutine(DestroyGroup());
                 }
-
-                StartCoroutine(DestroyGroup());
             }
 
             _gameManager.moves--;
@@ -306,7 +306,7 @@ namespace Gameplay
             groupList.Clear();
             tempPos = _gameManager.matrixTransforms[column, row];
             transform.DOMove(tempPos, 0.5f).SetEase(Ease.OutBounce).OnComplete(SetCube);
-            if (TryGetComponent(out SpriteRenderer renderer)) renderer.sortingOrder = row;
+            ChangeSortingOrder(row);
         }
 
         protected virtual void SetCube()

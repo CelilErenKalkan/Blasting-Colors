@@ -56,7 +56,7 @@ public class Goals : MonoBehaviour
             var goalName = "Goal" + i;
             var goalCubeNo = PlayerPrefs.GetInt(goalName, random);
 
-            cube = Instantiate(_gameManager.cubes[goalCubeNo], transform);
+            cube = Instantiate(_gameManager.cubes[goalCubeNo], transform.GetChild(i));
             if (transform.GetChild(i).TryGetComponent(out Image image) &&
                 _gameManager.cubes[goalCubeNo].TryGetComponent(out SpriteRenderer cubeImage))
             {
@@ -65,9 +65,13 @@ public class Goals : MonoBehaviour
             }
 
             PlayerPrefs.SetInt(goalName, goalCubeNo);
-            
+
             if (cube.TryGetComponent(out Cube cubeScript))
+            {
                 _gameManager.goalList.Add(cubeScript);
+                cubeScript.enabled = false;
+                cube.transform.localPosition = new Vector3(0,0,0);
+            }
         }
 
         SetGoalTexts();

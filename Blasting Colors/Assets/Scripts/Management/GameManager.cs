@@ -13,7 +13,6 @@ public class GameManager : MonoSingleton<GameManager>
     [HideInInspector] public float offset;
     [HideInInspector] public bool isPlayable;
     [HideInInspector] public List<Cube> goalList = new List<Cube>();
-    [HideInInspector] public Transform rocketCenter;
 
     public int moves = 30;
     public int duckSpawnChance;

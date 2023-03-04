@@ -1405,7 +1405,6 @@ MonoBehaviour:
   offset: 0
   isPlayable: 0
   goalList: []
-  rocketCenter: {fileID: 0}
   moves: 30
   duckSpawnChance: 5
   balloonSpawnChance: 10
