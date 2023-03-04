@@ -185,6 +185,9 @@ namespace Gameplay
             var targetScale = new Vector3(0.1f, 0.1f, 0.1f);
             transform.DOScale(targetScale, 0.5f).SetEase(Ease.InBack).OnComplete(() =>
             {
+                if (_isClicked)
+                    _gameManager.DecreaseRow();
+                
                 rocket.ActivateRocket();
                 DestroyThis();
             });
