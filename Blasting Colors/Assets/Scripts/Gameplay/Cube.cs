@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using Management;
 using UnityEngine;
@@ -68,6 +69,7 @@ namespace Gameplay
 
             groupList.Add(invoter);
             groupList.Remove(this);
+            groupList = groupList.Distinct().ToList();
         }
 
         public void CheckGroup()

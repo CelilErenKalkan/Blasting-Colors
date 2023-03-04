@@ -58,6 +58,7 @@
      <Compile Include="Assets\Scripts\Gameplay\Rocket.cs" />
      <Compile Include="Assets\Scripts\Management\GameManager.cs" />
      <Compile Include="Assets\Scripts\Management\MonoSingleton.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\HorizontalRocket.cs" />
      <Compile Include="Assets\Scripts\Management\Pool.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Board.cs" />
      <Compile Include="Assets\Scripts\BackgroundTile.cs" />
@@ -70,6 +71,7 @@
      <Compile Include="Assets\Scripts\BalloonAudioSource.cs" />
      <Compile Include="Assets\Scripts\Gameplay\RocketLaunch.cs" />
      <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModulePhysics.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\VerticalRocket.cs" />
      <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUnityVersion.cs" />
      <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleSprite.cs" />
      <Compile Include="Assets\Scripts\DuckAudioSource.cs" />
@@ -84,8 +86,6 @@
      <Compile Include="Assets\Scripts\Screen Adjustment\CameraViewportHandler.cs" />
      <Compile Include="Assets\Scripts\PoolItemType.cs" />
      <Compile Include="Assets\Scripts\Management\SoundManager.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\VerticalRocket.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\HorizontalRocket.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
