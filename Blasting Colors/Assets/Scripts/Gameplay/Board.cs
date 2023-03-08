@@ -1,57 +1,59 @@
-using System;
 using UnityEngine;
 using static Actions;
 
-public class Board : MonoBehaviour
+namespace Gameplay
 {
-    public int width;
-    public int height;
-    public float distance;
-    private void Awake()
+    public class Board : MonoBehaviour
     {
-        GameManager.Instance.width = width;
-        GameManager.Instance.height = height;
-        GameManager.Instance.offset = distance;
-        GameManager.Instance.matrixTransforms = new Vector2[width, height];
-        
-        var amountX = (float)(width - 1) / -2;
-        var amountY = (float)(height - 1) / -2;
-        var x = amountX * distance;
-        var y = amountY * distance;
-        
-        for (int i = 0; i < width; i++)
+        public int width;
+        public int height;
+        public float distance;
+        private void Awake()
         {
-            for (int j = 0; j < height; j++)
+            GameManager.Instance.width = width;
+            GameManager.Instance.height = height;
+            GameManager.Instance.offset = distance;
+            GameManager.Instance.matrixTransforms = new Vector2[width, height];
+        
+            var amountX = (float)(width - 1) / -2;
+            var amountY = (float)(height - 1) / -2;
+            var x = amountX * distance;
+            var y = amountY * distance;
+        
+            for (int i = 0; i < width; i++)
             {
-                GameManager.Instance.matrixTransforms[i, j] = new Vector2(x, y);
-                y += distance;
+                for (int j = 0; j < height; j++)
+                {
+                    GameManager.Instance.matrixTransforms[i, j] = new Vector2(x, y);
+                    y += distance;
+                }
+
+                y = amountY * distance;
+                x += distance;
             }
 
-            y = amountY * distance;
-            x += distance;
+            x = amountX * distance;
         }
 
-        x = amountX * distance;
-    }
-
-    private void OnEnable()
-    {
-        LevelStart += OnGameStarted;
-    }
-    
-    private void OnDisable()
-    {
-        LevelStart -= OnGameStarted;
-    }
-
-    private void OnGameStarted()
-    {
-        if (TryGetComponent(out SpriteRenderer spriteRenderer))
+        private void OnEnable()
         {
-            var borderWidth = width + 0.2f;
-            var borderHeight = this.height + 0.4f;
-            spriteRenderer.size = new Vector2(borderWidth, borderHeight);
-            spriteRenderer.enabled = true;
+            LevelStart += OnGameStarted;
+        }
+    
+        private void OnDisable()
+        {
+            LevelStart -= OnGameStarted;
+        }
+
+        private void OnGameStarted()
+        {
+            if (TryGetComponent(out SpriteRenderer spriteRenderer))
+            {
+                var borderWidth = width + 0.2f;
+                var borderHeight = this.height + 0.4f;
+                spriteRenderer.size = new Vector2(borderWidth, borderHeight);
+                spriteRenderer.enabled = true;
+            }
         }
     }
 }

@@ -243,8 +243,21 @@ namespace Gameplay
                 if (cubeType != CubeType.HorizontalRocket && cubeType != CubeType.VerticalRocket &&
                     cubeType != CubeType.Balloon)
                 {
-                    //var particleName = tag + "Rocks";
-                    //Pool.Instance.SpawnObject(cube.transform.position, particleName, null, 1f);
+                    switch (cubeType)
+                    {
+                        case CubeType.Green:
+                            Pool.Instance.SpawnObject(transform.position, PoolItemType.GreenRocks, null, 1f);
+                            break;
+                        case CubeType.Purple:
+                            Pool.Instance.SpawnObject(transform.position, PoolItemType.PurpleRocks, null, 1f);
+                            break;
+                        case CubeType.Red:
+                            Pool.Instance.SpawnObject(transform.position, PoolItemType.RedRocks, null, 1f);
+                            break;
+                        case CubeType.Yellow:
+                            Pool.Instance.SpawnObject(transform.position, PoolItemType.YellowRocks, null, 1f);
+                            break;
+                    }
                 }
 
                 CubeDestroyed?.Invoke();
